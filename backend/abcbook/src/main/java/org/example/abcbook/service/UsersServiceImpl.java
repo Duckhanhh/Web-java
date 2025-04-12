@@ -1,12 +1,13 @@
 package org.example.abcbook.service;
 
 import org.example.abcbook.dto.request.UserRequest;
-import org.example.abcbook.exception.AppExeption;
-import org.example.abcbook.exception.ErrorCode;
+import org.example.abcbook.exception.AppException;
 import org.example.abcbook.mapper.UsersMapper;
 import org.example.abcbook.model.Users;
 import org.example.abcbook.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,10 +25,24 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public void createUser(UserRequest userData) {
-        if (usersRepository.existsByEmail(userData.getEmail())) {
-            throw new AppExeption(ErrorCode.EMAIL_EXISTED);
+    public void createUser(UserRequest userData) throws AppException, Exception {
+        if (userData == null) {
+            throw new AppException("CU00001", "create.user.data.empty");
         }
+
+        if (usersRepository.existsByEmail(userData.getEmail())) {
+            throw new AppException("CU00002", "create.user.email.existed");
+        }
+
+        if (usersRepository.existsByPhoneNumber(userData.getPhoneNumber())) {
+            throw new AppException("CU00003", "create.user.phoneNumber.existed");
+        }
+
+        //Encode password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String encodedPassword = passwordEncoder.encode(userData.getPassword());
+        userData.setPassword(encodedPassword);
+
         Users user = usersMapper.userRequestToUser(userData);
         user.setRegistrationDate(new Date());
         usersRepository.save(user);

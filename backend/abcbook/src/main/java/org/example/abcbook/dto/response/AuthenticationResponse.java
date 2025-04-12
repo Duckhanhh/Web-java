@@ -6,19 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse <T> {
-    private String code;
-    private boolean success;
-    private String message;
-    private T data;
-    private LocalDateTime timestamp;
-    private String path;
+public class AuthenticationResponse {
+    private String token;
+    private boolean authenticated;
 }
-
