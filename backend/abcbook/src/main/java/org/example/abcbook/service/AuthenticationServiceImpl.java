@@ -5,31 +5,32 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import lombok.experimental.NonFinal;
 import org.example.abcbook.dto.request.AuthenticationRequest;
 import org.example.abcbook.dto.request.IntrospectRequest;
 import org.example.abcbook.dto.response.AuthenticationResponse;
 import org.example.abcbook.dto.response.IntrospectResponse;
 import org.example.abcbook.exception.AppException;
+import org.example.abcbook.model.Users;
 import org.example.abcbook.repository.UsersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
-    @NonFinal
-    protected static final String SIGNER_KEY = "1OerMfDKLdBNq/XOShuiHShj0NIUb3L/9oSFlX0P6AHELuL9hLK6hz3qJ/rWAa2T";
+    @Value("${jwt.signerKey}")
+    private String signerKey;
 
     @Autowired
     private UsersRepository usersRepository;
@@ -55,16 +56,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return AuthenticationResponse.builder()
                 .authenticated(true)
-                .token(generateToken(authenticationRequest.getEmail()))
+                .token(generateToken(user))
                 .build();
     }
 
-    private String generateToken(String email) {
+    private String generateToken(Users users) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(email)
+                .subject(users.getEmail())
                 .issuer("abcbook")
+                .claim("scope", builderScope(users))
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()))
                 .build();
@@ -73,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         JWSObject jsonObject = new JWSObject(header, payload);
         try {
-            jsonObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            jsonObject.sign(new MACSigner(signerKey.getBytes()));
             return jsonObject.serialize();
         } catch (JOSEException e) {
             logger.error(e.getMessage());
@@ -85,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public IntrospectResponse introspect(IntrospectRequest introspectRequest) throws AppException, Exception {
         var token = introspectRequest.getToken();
         //verify token
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY);
+        JWSVerifier verifier = new MACVerifier(signerKey);
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         //Kiem tra token da het han hay chua
@@ -102,6 +104,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return IntrospectResponse.builder()
                 .valid(true)
-                .build() ;
+                .build();
+    }
+
+    private String builderScope(Users users) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+
+        if (!users.getRole().isEmpty() || !users.getRole().isBlank()) {
+            stringJoiner.add("ROLE_" + users.getRole());
+        }
+        return stringJoiner.toString();
     }
 }

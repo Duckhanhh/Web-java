@@ -1,16 +1,19 @@
 package org.example.abcbook.service;
 
 import org.example.abcbook.dto.request.UserRequest;
+import org.example.abcbook.dto.response.UserResponse;
 import org.example.abcbook.exception.AppException;
 import org.example.abcbook.mapper.UsersMapper;
 import org.example.abcbook.model.Users;
 import org.example.abcbook.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -25,7 +28,13 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public void createUser(UserRequest userData) throws AppException, Exception {
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> getAllUsers() {
+        return usersRepository.findAll().stream().map(usersMapper::toUserResponse).toList();
+    }
+
+    @Override
+    public void createUser(UserRequest userData) throws AppException {
         if (userData == null) {
             throw new AppException("CU00001", "create.user.data.empty");
         }
