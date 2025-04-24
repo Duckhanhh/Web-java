@@ -11,13 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRequest {
+public class AuthenticationRequest {
     @NotNull(message = "create.user.email.empty")
     @Email(message = "create.user.email.wrong.format")
     private String email;
+
     @NotNull(message = "create.user.password.empty")
     private String password;
-    private String phoneNumber;
-    private String firstName;
-    private String lastName;
 }

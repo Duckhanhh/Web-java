@@ -28,4 +28,6 @@ public class Users {
     private String lastName;
     @Column(name = "registration_date")
     private Date registrationDate;
+    @Column(name = "role")
+    private String role;
 }
