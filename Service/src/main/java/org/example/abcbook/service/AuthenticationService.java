@@ -11,7 +11,7 @@ import org.example.abcbook.dto.response.AuthenticationResponse;
 import org.example.abcbook.dto.response.IntrospectResponse;
 import org.example.abcbook.exception.AppException;
 import org.example.abcbook.model.Users;
-import org.example.abcbook.repository.UsersRepository;
+import org.example.abcbook.repository.UsersRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class AuthenticationService {
     private String signerKey;
 
     @Autowired
-    private UsersRepository usersRepository;
+    private UsersRepo usersRepository;
 
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest) throws AppException, Exception {
         if (authenticationRequest == null
@@ -67,7 +67,7 @@ public class AuthenticationService {
                 .issuer("abcbook")
                 .claim("scope", builderScope(users))
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()))
+                .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());

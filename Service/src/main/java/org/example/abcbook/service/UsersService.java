@@ -6,7 +6,7 @@ import org.example.abcbook.dto.response.UserResponse;
 import org.example.abcbook.exception.AppException;
 import org.example.abcbook.mapper.UsersMapper;
 import org.example.abcbook.model.Users;
-import org.example.abcbook.repository.UsersRepository;
+import org.example.abcbook.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class UsersService {
     @Autowired
-    private UsersRepository usersRepository;
+    private UsersRepo usersRepository;
     @Autowired
     private UsersMapper usersMapper;
     
