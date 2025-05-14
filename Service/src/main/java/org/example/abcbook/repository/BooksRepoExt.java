@@ -11,4 +11,6 @@ public interface BooksRepoExt {
                         Date fromAddDate, Date toAddDate) throws Exception;
 
     void deleteBook(Long id) throws Exception;
+
+    List<Books> findBookInStock(Long bookId, Date fromDate, Date toDate) throws Exception;
 }

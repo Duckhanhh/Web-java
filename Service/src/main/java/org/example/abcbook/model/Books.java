@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -39,8 +41,6 @@ public class Books {
     private String author;
     @Column(name = "category")
     private String category;
-    @Column(name = "quantity_in_stock")
-    private int quantityInStock;
     @Column(name = "add_date")
-    private String addDate;
+    private Date addDate;
 }

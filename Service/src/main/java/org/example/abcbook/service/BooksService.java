@@ -21,6 +21,7 @@ public class BooksService {
 
     /**
      * Ham tim kiem tat ca sach
+     *
      * @param title
      * @param fromPrice
      * @param toPrice
@@ -44,8 +45,14 @@ public class BooksService {
         booksRepo.deleteBook(id);
     }
 
-    @Transactional
-    public void updateBook(Long id, Books book) throws Exception {
+    /**
+     * Cap nhat trang thai sach ve khong hieu luc
+     *
+     * @param book
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateBook(Books book) throws Exception {
         if (book == null) {
             throw new AppException("UB00001", "book.management.update.book.empty");
         }
@@ -56,5 +63,18 @@ public class BooksService {
         }
 
         booksRepo.save(book);
+    }
+
+    /**
+     * Ham lay sach trong kho
+     *
+     * @param bookId
+     * @param fromDate
+     * @param toDate
+     * @return
+     * @throws Exception
+     */
+    public List<Books> findBookInStock(Long bookId, Date fromDate, Date toDate) throws Exception {
+        return booksRepo.findBookInStock(bookId, fromDate, toDate);
     }
 }
