@@ -6,6 +6,7 @@ import jakarta.persistence.Query;
 import org.bpm.abcbook.model.Books;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -103,5 +104,29 @@ public class BooksRepoExtImpl implements BooksRepoExt{
         Query query = em.createNativeQuery("UPDATE Books SET book_status = 0 WHERE id = #id");
         query.setParameter("id", id);
         query.executeUpdate();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Books> findBookInStock(Long bookId, Date fromDate, Date toDate) {
+        if (bookId == null) {
+            return new ArrayList<>();
+        }
+        StringBuilder sql = new StringBuilder("SELECT * FROM Books b INNER JOIN Inventory i ON b.book_id = i.book_id WHERE book_id = #bookId ");
+        if (fromDate != null) {
+            sql.append(" AND addDate >= #fromAddDate ");
+        }
+        if (toDate != null) {
+            sql.append(" AND addDate < #toAddDate + 1 ");
+        }
+        Query query = em.createNativeQuery(sql.toString(), Books.class);
+        query.setParameter("bookId", bookId);
+        if (fromDate != null) {
+            query.setParameter("fromDate", fromDate);
+        }
+        if (toDate != null) {
+            query.setParameter("toDate", toDate);
+        }
+        return query.getResultList();
     }
 }

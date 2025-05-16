@@ -54,14 +54,14 @@ public class BooksController {
         return apiResponse;
     }
 
-    @PatchMapping("{id}")
-    public ApiResponse updateBook(@PathVariable("id") Long id, @RequestBody UpdateBookRequest bookRequest) {
+    @PatchMapping("/update")
+    public ApiResponse updateBook(@RequestBody UpdateBookRequest bookRequest) {
         ApiResponse<List<Books>> apiResponse = ApiResponse.<List<Books>>builder()
                 .success(true)
                 .build();
         try {
             Books updatingBook = booksMapper.UpdateBookRequestToBooks(bookRequest);
-            booksService.updateBook(id, updatingBook);
+            booksService.updateBook(updatingBook);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AppException("UB00000", e.getMessage());
