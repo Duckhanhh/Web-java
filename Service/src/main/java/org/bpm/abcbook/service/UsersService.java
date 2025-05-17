@@ -6,7 +6,7 @@ import org.bpm.abcbook.dto.request.UserRequest;
 import org.bpm.abcbook.dto.response.UserResponse;
 import org.bpm.abcbook.exception.AppException;
 import org.bpm.abcbook.mapper.UsersMapper;
-import org.bpm.abcbook.model.Users;
+import org.bpm.abcbook.model.Staff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +23,7 @@ public class UsersService {
     @Autowired
     private UsersMapper usersMapper;
     
-    public Users getUserById(Long id) {
+    public Staff getUserById(Long id) {
         return usersRepository.findById(id).orElse(null);
     }
 
@@ -50,7 +50,7 @@ public class UsersService {
         String encodedPassword = passwordEncoder.encode(userData.getPassword());
         userData.setPassword(encodedPassword);
 
-        Users user = usersMapper.userRequestToUser(userData);
+        Staff user = usersMapper.userRequestToUser(userData);
         user.setRegistrationDate(new Date());
         usersRepository.save(user);
     }

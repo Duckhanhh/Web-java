@@ -45,9 +45,9 @@ public class AuthenticationController {
                 model.addAttribute("errors", errors);
                 model.addAttribute("authenticationRequest", authenticationRequest);
                 request.setAttribute("error", "Sai tài khoản hoặc mật khẩu");
-                // forward đến login.jsp, thường qua một Servlet hoặc bộ render nào đó
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
-                return "login.jsp";
+                // forward đến login.html, thường qua một Servlet hoặc bộ render nào đó
+                request.getRequestDispatcher("/login.html").forward(request, response);
+                return "login.html";
             }
 
             authenticationService.login(authenticationRequest);
@@ -55,11 +55,11 @@ public class AuthenticationController {
         } catch (AppException e) {
             logger.error(e.getMessage());
             model.addAttribute("error", e.getMessage());
-            return "login.jsp";
+            return "login.html";
         } catch (Exception e) {
             logger.error(e.getMessage());
             model.addAttribute("error", "Hệ thống gặp lỗi, vui lòng thử lại.");
-            return "login.jsp";
+            return "login.html";
         }
     }
 

@@ -8,10 +8,10 @@ import com.nimbusds.jwt.SignedJWT;
 import org.bpm.abcbook.dto.request.AuthenticationRequest;
 import org.bpm.abcbook.dto.request.IntrospectRequest;
 import org.bpm.abcbook.exception.AppException;
+import org.bpm.abcbook.model.Staff;
 import org.bpm.abcbook.repository.UsersRepo;
 import org.bpm.abcbook.dto.response.AuthenticationResponse;
 import org.bpm.abcbook.dto.response.IntrospectResponse;
-import org.bpm.abcbook.model.Users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String generateToken(Users users) {
+    private String generateToken(Staff users) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -105,7 +105,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String builderScope(Users users) {
+    private String builderScope(Staff users) {
         StringJoiner stringJoiner = new StringJoiner(" ");
 
         if (!users.getRole().isEmpty() || !users.getRole().isBlank()) {

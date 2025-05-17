@@ -10,12 +10,14 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(schema = "ABC_BOOK", name = "Users")
-public class Users {
+@Table(schema = "ABC_BOOK", name = "Staff")
+public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // nhan biet tu dong tao boi mysql
-    @Column(name = "user_id")
+    @Column(name = "staff_id")
     private Long userId;
+    @Column(name = "staff_code")
+    private String staffCode;
     @Column(name = "email")
     private String email;
     @Column(name = "phone_number")
@@ -28,4 +30,13 @@ public class Users {
     private String lastName;
     @Column(name = "registration_date")
     private Date registrationDate;
+    @Column(name = "role")
+    private String role;
+    @Column(name = "manager")
+    private String manager;
+    @Column(name = "permission")
+    private String permission;
+    @Column(name = "status")
+    private Long status;
+
 }
