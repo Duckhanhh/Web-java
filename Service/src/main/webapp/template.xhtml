@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Bookstore Dashboard</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet"/>
+    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet"/>
+    <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet"/>
+    <link href="/assets/css/style.css" rel="stylesheet"/>
+</h:head>
+<body>
+<header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+        <a href="/bookstore/dashboard" class="logo d-flex align-items-center">
+            <span class="d-none d-lg-block">Bookstore</span>
+        </a>
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+    <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+            <li class="nav-item dropdown">
+                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-bell"></i>
+                    <span class="badge bg-primary badge-number">4</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                    <li class="dropdown-header">
+                        You have 4 new notifications
+                        <a href="#">
+                            <span class="badge rounded-pill bg-primary p-2 ms-2">View all</span>
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider"/>
+                    </li>
+                    <li class="notification-item">
+                        <i class="bi bi-exclamation-circle text-warning"></i>
+                        <div>
+                            <h4>New Book Added</h4>
+                            <p>A new book has been added to inventory.</p>
+                            <p>30 min. ago</p>
+                        </div>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider"/>
+                    </li>
+                    <li class="notification-item">
+                        <i class="bi bi-check-circle text-success"></i>
+                        <div>
+                            <h4>Order Confirmed</h4>
+                            <p>Order #2457 has been confirmed.</p>
+                            <p>1 hr. ago</p>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown pe-3">
+                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <span class="d-none d-md-block dropdown-toggle ps-2">Kevin Anderson</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                    <li class="dropdown-header">
+                        <h6>Kevin Anderson</h6>
+                        <span data-role="admin">admin</span>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="#">
+                            <i class="bi bi-person"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="#">
+                            <i class="bi bi-gear"></i>
+                            <span>Account Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="#">
+                            <i class="bi bi-question-circle"></i>
+                            <span>Need Help?</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="/bookstore/logout">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>
+<aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="#dashboard" data-section="dashboard">
+                <i class="bi bi-grid"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item" data-role="admin,staff">
+            <a class="nav-link collapsed" href="#inventory" data-section="inventory">
+                <i class="bi bi-box"></i>
+                <span>Quản lý kho</span>
+            </a>
+        </li>
+        <li class="nav-item" data-role="admin,staff">
+            <a class="nav-link collapsed" href="#books" data-section="books">
+                <i class="bi bi-book"></i>
+                <span>Quản lý sách</span>
+            </a>
+        </li>
+        <li class="nav-item" data-role="admin,staff">
+            <a class="nav-link collapsed" href="#orders" data-section="orders">
+                <i class="bi bi-cart"></i>
+                <span>Quản lý đơn hàng</span>
+            </a>
+        </li>
+        <li class="nav-item" data-role="admin,staff">
+            <a class="nav-link collapsed" href="#purchase-orders" data-section="purchase-orders">
+                <i class="bi bi-truck"></i>
+                <span>Quản lý nhập hàng</span>
+            </a>
+        </li>
+        <li class="nav-item" data-role="admin">
+            <a class="nav-link collapsed" href="#staff" data-section="staff">
+                <i class="bi bi-person"></i>
+                <span>Quản lý nhân viên</span>
+            </a>
+        </li>
+    </ul>
+</aside>
+<ui:insert name="content"/>
+<script>
+    const userRole = 'admin';
+    document.querySelectorAll('[data-role]').forEach(item => {
+            const roles = item.getAttribute('data-role').split(',');
+            if (!roles.includes(userRole)) {
+                item.style.display = 'none';
+            }
+        }
+    );
+    document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = link.getAttribute('data-section');
+                    document.querySelectorAll('.section').forEach(section => {
+                            section.classList.add('d-none');
+                        }
+                    );
+                    const targetSection = document.getElementById(target);
+                    if (targetSection) {
+                        targetSection.classList.remove('d-none');
+                    }
+                }
+            );
+        }
+    );
+</script>
+
+<footer id="footer" class="footer" style="margin-top: 50px;">
+    <div class="copyright">
+        © Copyright
+        <strong>
+            <span>Bookstore</span>
+        </strong>
+        . All Rights Reserved
+    </div>
+    <div class="credits">
+        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+</footer>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/vendor/simple-datatables/simple-datatables.js"></script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>
