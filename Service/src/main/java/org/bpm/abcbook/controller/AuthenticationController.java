@@ -1,5 +1,7 @@
 package org.bpm.abcbook.controller;
 
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,24 +27,24 @@ import org.springframework.web.bind.annotation.*;
 @Data
 public class AuthenticationController {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
-
     private String email;
     private String password;
     private String errorMessage;
-    private boolean rememberMe;
 
     @Autowired
     private AuthenticationService authenticationService;
 
-    @GetMapping("/test")
-    public String showLoginForm() {
-        return "login";
-    }
-
     @PostMapping("login")
     public String login() throws Exception {
+        try {
             authenticationService.login(new AuthenticationRequest(email, password));
             return "dashboard?faces-redirect=true";
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            errorMessage = e.getMessage();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Thông tin lỗi", e.getMessage()));
+            return null; // Trả về null để không chuyển hướng
+        }
     }
 
     @PostMapping("introspect")

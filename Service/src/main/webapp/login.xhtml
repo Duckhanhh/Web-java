@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
     <title>Login Page</title>
     <meta charset="UTF-8"/>
@@ -18,11 +19,10 @@
             <div class="col-md-6">
                 <div class="card mt-5">
                     <div class="card-body">
-                        <h3 class="card-title text-center">Đăng nhập</h3>
+                        <div class="d-flex justify-content-center py-4">
+                            <img class="logo d-flex align-items-center w-auto" src="assets/img/main_logo.png" alt=""/>
+                        </div>
                         <h:form id="loginForm">
-<!--                            &lt;!&ndash; Display validation messages &ndash;&gt;-->
-                            <h:messages styleClass="text-danger text-center"/>
-
                             <!-- Email Input -->
                             <div class="mb-3">
                                 <h:outputLabel for="email" value="Email" styleClass="form-label"/>
@@ -41,15 +41,11 @@
                                 <h:message for="password" styleClass="text-danger"/>
                             </div>
 
-<!--                            &lt;!&ndash; Remember Me Checkbox &ndash;&gt;-->
-<!--                            <div class="mb-3 form-check">-->
-<!--                                <h:selectBooleanCheckbox id="rememberMe" value="#{authenticationController.rememberMe}" styleClass="form-check-input"/>-->
-<!--                                <h:outputLabel for="rememberMe" value="Ghi nhớ đăng nhập" styleClass="form-check-label"/>-->
-<!--                            </div>-->
-
                             <!-- Submit Button -->
                             <div class="d-grid">
-                                <h:commandButton value="Đăng nhập" action="#{authenticationController.login}" styleClass="btn btn-primary"/>
+                                <h:commandButton value="Đăng nhập"
+                                                 action="#{authenticationController.login}"
+                                                 styleClass="btn btn-danger"/>
                             </div>
                         </h:form>
                     </div>
@@ -57,7 +53,24 @@
             </div>
         </div>
     </div>
-
+    <!-- Bootstrap Modal for error messages -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Lỗi đăng nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ui:repeat value="#{facesContext.messageList}" var="msg">
+                        <div class="alert alert-danger" role="alert">
+                            #{msg.summary}
+                        </div>
+                    </ui:repeat>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap 5.3.3 JS and Popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
             integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
