@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRequest {
+public class StaffRequest {
     @NotNull(message = "create.user.email.empty")
     @Email(message = "create.user.email.wrong.format")
     private String email;
@@ -20,4 +20,6 @@ public class UserRequest {
     private String phoneNumber;
     private String firstName;
     private String lastName;
+    private String role;
+    private String staffCode;
 }

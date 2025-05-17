@@ -44,22 +44,21 @@ public class AuthenticationController {
                 bindingResult.getAllErrors().forEach(error -> errors.add(error.getDefaultMessage()));
                 model.addAttribute("errors", errors);
                 model.addAttribute("authenticationRequest", authenticationRequest);
-                request.setAttribute("error", "Sai tài khoản hoặc mật khẩu");
-                // forward đến login.html, thường qua một Servlet hoặc bộ render nào đó
-                request.getRequestDispatcher("/login.html").forward(request, response);
-                return "login.html";
+                // Combine all errors into a single string for popup
+                model.addAttribute("error", String.join("; ", errors));
+                return "login";
             }
 
             authenticationService.login(authenticationRequest);
-            return "redirect:/";
+            return "redirect:/dashboard/home";
         } catch (AppException e) {
             logger.error(e.getMessage());
             model.addAttribute("error", e.getMessage());
-            return "login.html";
+            return "login";
         } catch (Exception e) {
             logger.error(e.getMessage());
             model.addAttribute("error", "Hệ thống gặp lỗi, vui lòng thử lại.");
-            return "login.html";
+            return "login";
         }
     }
 

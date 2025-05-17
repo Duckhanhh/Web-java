@@ -42,6 +42,8 @@
                         <!-- End Logo -->
                         <div class="card mb-3">
                             <div class="card-body">
+                                <!-- Hidden error data for JS -->
+                                <div id="error-data" th:attr="data-error=${error}"></div>
                                 <form class="row g-3 pt-4 pb-2 needs-validation" id="loginForm" novalidate
                                       action="/auth/login" method="post">
                                     <div class="col-12">
@@ -118,3 +120,4 @@
 </body>
 <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </html>
+

@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse {
+public class StaffResponse {
     private Long userId;
     private String email;
     private String phoneNumber;
