@@ -15,6 +15,11 @@ import java.util.Date;
 @Entity
 @Table(schema = "ABC_BOOK", name = "Books")
 public class Books {
+    public static final Long BOOK_STATUS_ACTIVE = 1L;
+    public static final Long BOOK_STATUS_INACTIVE = 0L;
+    public static final Long BOOK_FORMAT_HARDCOVER = 1L;
+    public static final Long BOOK_FORMAT_EBOOK = 2L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
@@ -28,10 +33,10 @@ public class Books {
     @Column(name = "price")
     private Long price;
     @Column(name = "rating_average")
-    private double ratingAverage;
+    private Double ratingAverage;
     @Column(name = "publication_date")
     private String publicationDate;
-    @Column(name = "publisher")
+    @Column(name = "supplier_code")
     private String publisher;
     @Column(name = "book_status")
     private Long bookStatus; // 1:Hieu luc | 0: Ko hieu luc

@@ -42,7 +42,8 @@ public class AuthenticationController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             errorMessage = e.getMessage();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Thông tin lỗi", e.getMessage()));
+            FacesContext.getCurrentInstance()
+                    .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage()));
             return null; // Trả về null để không chuyển hướng
         }
     }

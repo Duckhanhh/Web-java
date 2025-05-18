@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Dashboard - Bookstore</title>
+    <style>
+        .books-table {
+            margin-left: 0 !important;
+            text-align: left !important;
+            width: auto !important;
+        }
+
+        .crud-demo {
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+            text-align: left !important;
+        }
+
+        /* Loại bỏ padding/margin trái của cột checkbox và cột ID */
+        .books-table .ui-selection-column,
+        .books-table .ui-column-id {
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        /* Đảm bảo header và cell của cột ID sát trái */
+        .books-table th.ui-column-id,
+        .books-table td.ui-column-id {
+            padding-left: 0px !important; /* Khoảng cách nhỏ để dễ nhìn, có thể đặt 0 */
+        }
+    </style>
+</h:head>
+<h:body>
+    <ui:composition template="/template.xhtml">
+        <ui:define name="content">
+            <div class="card crud-demo">
+                <h:form id="form">
+                    <p:messages id="messages" showDetail="false" autoUpdate="true" closable="true"/>
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton value="Thêm mới" icon="pi pi-plus" actionListener="#{booksController.prepareAddBook}"
+                                             update=":dialogs:add-book-content"
+                                             oncomplete="PF('addBookDialog').show()"
+                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                                <p:resetInput target=":dialogs:add-book-content"/>
+                            </p:commandButton>
+                            <p:commandButton id="delete-books-button" value="#{booksController.deleteButtonMessage}"
+                                             icon="pi pi-trash" actionListener="#{booksController.deleteSelectedBooks}"
+                                             styleClass="ui-button-danger"
+                                             process="@this"
+                                             disabled="#{!booksController.hasSelectedBooks()}" update="@this">
+                                <p:confirm header="Xác nhận" message="Xoá các cuốn sách đã chọn?"
+                                           icon="pi pi-exclamation-triangle"/>
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                    <p:dataTable id="dt-books"
+                                 widgetVar="dtBooks"
+                                 var="book"
+                                 value="#{booksController.filteredBooks}"
+                                 reflow="true"
+                                 scrollable="true"
+                                 scrollWidth="100%"
+                                 styleClass="books-table"
+                                 resizableColumns="true"
+                                 style="margin-left: 0; text-align: left;"
+                                 selection="#{booksController.selectedBooks}"
+                                 rowKey="#{book.id}"
+                                 paginator="true"
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10,15"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginatorPosition="bottom"
+                                 emptyMessage="Không có sách nào">
+                        <p:ajax event="rowSelect" update=":form:delete-books-button"/>
+                        <p:ajax event="rowUnselect" update=":form:delete-books-button"/>
+                        <p:ajax event="rowSelectCheckbox" update=":form:delete-books-button"/>
+                        <p:ajax event="rowUnselectCheckbox" update=":form:delete-books-button"/>
+                        <p:ajax event="toggleSelect" update=":form:delete-books-button"/>
+
+                        <p:column selectionMode="multiple" exportable="false"
+                                  style="width: 30px; padding-left: 0; margin-left: 0;"></p:column>
+                        <p:column headerText="ID" sortBy="#{book.id}" filterBy="#{book.id}"
+                                  filterMatchMode="contains" style="width: 50px;" styleClass="ui-column-id">
+                            <h:outputText value="#{book.id}"/>
+                        </p:column>
+                        <p:column headerText="Tên" sortBy="#{book.title}" filterBy="#{book.title}"
+                                  filterMatchMode="contains" style="width: 150px;">
+                            <h:outputText value="#{book.title}"/>
+                        </p:column>
+                        <p:column headerText="Thể loại"
+                                  sortBy="#{booksController.categoryLabels[book.category]}"
+                                  filterBy="#{booksController.categoryLabels[book.category]}"
+                                  filterMatchMode="contains" style="width: 100px;">
+                            <h:outputText value="#{booksController.categoryLabels[book.category]}"/>
+                        </p:column>
+                        <p:column headerText="Tác giả" sortBy="#{book.author}" filterBy="#{book.author}"
+                                  filterMatchMode="contains" style="width: 100px;">
+                            <h:outputText value="#{book.author}"/>
+                        </p:column>
+                        <p:column headerText="Nhà xuất bản" sortBy="#{book.publisher}" filterBy="#{book.publisher}"
+                                  filterMatchMode="contains" style="width: 100px;">
+                            <h:outputText value="#{book.publisher}"/>
+                        </p:column>
+                        <p:column headerText="Giá bán" sortBy="#{book.price}" filterBy="#{book.price}"
+                                  filterMatchMode="contains" style="width: 65px;">
+                            <h:outputText value="#{book.price}"/>
+                        </p:column>
+                        <p:column headerText="Đánh giá" sortBy="#{book.ratingAverage}" style="width: 120px;">
+                            <p:rating value="#{book.ratingAverage.intValue()}" readonly="true"/>
+                        </p:column>
+                        <p:column headerText="Trạng thái" sortBy="#{book.bookStatus eq 1 ? 'Hiệu lực' : 'Không hiệu lực'}" style="width: 130px;"
+                                  filterBy="#{book.bookStatus eq 1 ? 'Hiệu lực' : 'Không hiệu lực'}"
+                                  filterMatchMode="contains">
+                            <h:outputText styleClass="book-badge status-#{book.bookStatus}"
+                                          value="#{book.bookStatus eq 1 ? 'Hiệu lực' : 'Không hiệu lực'}"/>
+                        </p:column>
+                        <p:column exportable="false" ariaHeaderText="Actions" style="width: 100px;">
+                            <p:commandButton icon="pi pi-info-circle" update=":dialogs:manage-book-content"
+                                             oncomplete="PF('managebookDialog').show()"
+                                             styleClass="rounded-button ui-button-secondary"
+                                             process="@this"
+                                             actionListener="#{booksController.prepareEdit(book)}">
+                                <p:resetInput target=":dialogs:manage-book-content"/>
+                            </p:commandButton>
+                            <p:commandButton icon="pi pi-pencil" update=":dialogs:update-book-content"
+                                             oncomplete="PF('updateBookDialog').show()"
+                                             style="margin-left: 5px;"
+                                             styleClass="edit-button rounded-button ui-button-success"
+                                             process="@this"
+                                             actionListener="#{booksController.prepareUpdate(book)}">
+                                <p:resetInput target=":dialogs:manage-book-content"/>
+                            </p:commandButton>
+                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                             process="@this"
+                                             rendered="#{book.bookStatus eq 1}"
+                                             style="margin-left: 5px;"
+                                             oncomplete="PF('deletebookDialog').show()"
+                                             actionListener="#{booksController.prepareEdit(book)}">
+                            </p:commandButton>
+                            <p:commandButton class="rounded-button" icon="pi pi-undo"
+                                             process="@this"
+                                             rendered="#{book.bookStatus eq 0}"
+                                             style="margin-left: 5px;"
+                                             oncomplete="PF('reversebookDialog').show()"
+                                             actionListener="#{booksController.prepareEdit(book)}">
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="dialogs">
+                    <p:dialog header="Thêm mới sách" showEffect="fade" modal="true" widgetVar="addBookDialog"
+                              responsive="true">
+                        <p:outputPanel id="add-book-content" class="ui-fluid">
+                            <!-- Thêm p:messages để hiển thị thông báo lỗi -->
+                            <p:messages id="add-messages" showDetail="true" autoUpdate="true" closable="true"/>
+                            <p:outputPanel>
+                                <div style="display: flex; align-items: flex-start; gap: 2rem;">
+                                    <div style="flex: 1;">
+                                        <div class="field">
+                                            <p:outputLabel for="add-name">Tên</p:outputLabel>
+                                            <p:inputText id="add-name" value="#{booksController.newBook.title}"
+                                                         required="true" requiredMessage="Phải nhập tên sách"/>
+                                        </div>
+                                        <div class="field">
+                                            <p:outputLabel for="add-author">Tác giả</p:outputLabel>
+                                            <p:inputText id="add-author" value="#{booksController.newBook.author}"
+                                                         required="true" requiredMessage="Phải nhập tên tác giả"/>
+                                        </div>
+                                        <div class="field">
+                                            <p:outputLabel for="add-description">Mô tả</p:outputLabel>
+                                            <p:inputTextarea id="add-description"
+                                                             value="#{booksController.newBook.description}"/>
+                                        </div>
+                                        <div class="field">
+                                            <p:outputLabel for="add-category">Thể loại</p:outputLabel>
+                                            <p:selectOneMenu id="add-category"
+                                                             value="#{booksController.newBook.category}">
+                                                <f:selectItems value="#{booksController.bookCategory}"
+                                                               var="category"
+                                                               itemLabel="#{booksController.categoryLabels[category]}"
+                                                               itemValue="#{category}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="field">
+                                            <p:outputLabel for="add-url">URL ảnh bìa</p:outputLabel>
+                                            <p:inputTextarea id="add-url"
+                                                             value="#{booksController.newBook.imageUrl}"/>
+                                        </div>
+
+
+                                        <div class="field col">
+                                            <p:outputLabel for="newPrice">Giá bán</p:outputLabel>
+                                            <p:inputNumber id="newPrice"
+                                                           value="#{booksController.newBook.price}"
+                                                           symbolPosition="s" decimalSeparator="."
+                                                           thousandSeparator=","
+                                                           rendered="true" requiredMessage="Phải nhập giá bán"/>
+                                        </div>
+
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="add-supplier">Nhà xuất bản</p:outputLabel>
+                                            <p:selectOneMenu id="add-supplier"
+                                                             value="#{booksController.newBook.publisher}">
+                                                <f:selectItems value="#{booksController.suppliersList}"
+                                                               var="supplier"
+                                                               itemLabel="#{supplier.supplierName}"
+                                                               itemValue="#{supplier.supplierCode}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </p:outputPanel>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Thêm mới" icon="pi pi-check"
+                                             actionListener="#{booksController.insertBook(booksController.newBook)}"
+                                             update="add-book-content :form:dt-books :form:messages"
+                                             process="add-book-content @this"
+                                             oncomplete="if (!args.validationFailed) { PF('addBookDialog').hide(); }"/>
+                            <p:commandButton value="Hủy" icon="pi pi-times" onclick="PF('addBookDialog').hide()"
+                                             class="ui-button-secondary" type="button"/>
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:dialog header="Thông tin chi tiết" showEffect="fade" modal="true" widgetVar="managebookDialog"
+                              responsive="true">
+                        <p:messages id="manage-messages" showDetail="false" autoUpdate="true" closable="true"/>
+                        <p:outputPanel id="manage-book-content" class="ui-fluid">
+                            <p:outputPanel rendered="#{not empty booksController.selectedBook}">
+                                <div style="display: flex; align-items: flex-start; gap: 2rem;">
+                                    <div style="flex: 1;">
+                                        <div class="field">
+                                            <p:outputLabel for="name">Tên</p:outputLabel>
+                                            <p:inputText id="name"
+                                                         value="#{booksController.selectedBook.title}"/>
+                                        </div>
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="author">Tác giả</p:outputLabel>
+                                            <p:inputText id="author" value="#{booksController.selectedBook.author}"/>
+                                        </div>
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="description">Mô tả</p:outputLabel>
+                                            <p:inputTextarea id="description"
+                                                             value="#{booksController.selectedBook.description}"/>
+                                        </div>
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="category">Thể loại</p:outputLabel>
+                                            <p:inputTextarea id="category"
+                                                             value="#{booksController.selectedBook.category}"/>
+                                        </div>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div class="field" style="margin-top: 1rem;">
+                                            <p:outputLabel for="url">URL ảnh bìa</p:outputLabel>
+                                            <p:inputTextarea id="url" value="#{booksController.selectedBook.imageUrl}"/>
+                                        </div>
+                                        <div class="formgrid grid" style="margin-top: 1rem;">
+                                            <div class="field col">
+                                                <p:outputLabel for="price">Giá bán</p:outputLabel>
+                                                <p:inputNumber id="price" value="#{booksController.selectedBook.price}"
+                                                               symbol=" VND"
+                                                               symbolPosition="s" decimalSeparator="."
+                                                               thousandSeparator=","/>
+                                            </div>
+                                        </div>
+
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="supplier">Nhà xuất bản</p:outputLabel>
+                                            <p:inputTextarea id="supplier"
+                                                             value="#{booksController.selectedBook.publisher}"/>
+                                        </div>
+                                    </div>
+                                    <div style="flex: 0 0 250px; display: flex; justify-content: flex-end;">
+                                        <p:graphicImage value="#{booksController.selectedBook.imageUrl}"
+                                                        style="width: 220px; height: auto; display: block;"
+                                                        rendered="#{not empty booksController.selectedBook.imageUrl}"/>
+
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </p:outputPanel>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Thoát" icon="pi pi-times" onclick="PF('managebookDialog').hide()"
+                                             class="ui-button-secondary" type="button"/>
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:dialog header="Sửa thông tin sách" showEffect="fade" modal="true" widgetVar="updateBookDialog"
+                              responsive="true">
+                        <p:messages id="update-messages" showDetail="false" autoUpdate="true" closable="true"/>
+                        <p:outputPanel id="update-book-content" class="ui-fluid">
+                                <div style="display: flex; align-items: flex-start; gap: 2rem;">
+                                    <div style="flex: 1;">
+                                        <div class="field">
+                                            <p:outputLabel for="update-name">Tên</p:outputLabel>
+                                            <p:inputText id="update-name"
+                                                         value="#{booksController.updateBook.title}"/>
+                                        </div>
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="update-author">Tác giả</p:outputLabel>
+                                            <p:inputText id="update-author" value="#{booksController.updateBook.author}"/>
+                                        </div>
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="update-description">Mô tả</p:outputLabel>
+                                            <p:inputTextarea id="update-description"
+                                                             value="#{booksController.updateBook.description}"/>
+                                        </div>
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="update-category">Thể loại</p:outputLabel>
+                                            <p:selectOneMenu id="update-category"
+                                                             value="#{booksController.updateBook.category}">
+                                                <f:selectItems value="#{booksController.bookCategory}"
+                                                               var="category"
+                                                               itemLabel="#{booksController.categoryLabels[category]}"
+                                                               itemValue="#{category}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div class="field" style="margin-top: 1rem;">
+                                            <p:outputLabel for="update-url">URL ảnh bìa</p:outputLabel>
+                                            <p:inputTextarea id="update-url" value="#{booksController.updateBook.imageUrl}"/>
+                                        </div>
+                                        <div class="formgrid grid" style="margin-top: 1rem;">
+                                            <div class="field col">
+                                                <p:outputLabel for="update-price">Giá bán</p:outputLabel>
+                                                <p:inputNumber id="update-price" value="#{booksController.updateBook.price}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="field" style="margin-top: 1rem">
+                                            <p:outputLabel for="update-supplier">Nhà xuất bản</p:outputLabel>
+                                            <p:selectOneMenu id="update-supplier"
+                                                             value="#{booksController.updateBook.publisher}">
+                                                <f:selectItems value="#{booksController.suppliersList}"
+                                                               var="supplier"
+                                                               itemLabel="#{supplier.supplierName}"
+                                                               itemValue="#{supplier.supplierCode}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                </div>
+                        </p:outputPanel>
+
+                        <f:facet name="footer">
+
+                            <p:commandButton value="Cập nhật" icon="pi pi-check"
+                                             actionListener="#{booksController.updateBook}"
+                                             update="update-book-content :form:dt-books :form:messages :dialogs:update-messages"
+                                             process="update-book-content @this"
+                                             oncomplete="if (!args.validationFailed) { PF('updateBookDialog').hide(); }"/>
+
+                            <p:commandButton value="Thoát" icon="pi pi-times" onclick="PF('updateBookDialog').hide()"
+                                             class="ui-button-secondary" type="button"/>
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:confirmDialog widgetVar="deletebookDialog" showEffect="fade" width="300"
+                                     message="Xoá cuốn sách?" header="Xác nhận" severity="warn">
+                        <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                         actionListener="#{booksController.delete}"
+                                         process="@this" update=":form:dt-books"
+                                         oncomplete="PF('deletebookDialog').hide()"/>
+                        <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('deletebookDialog').hide()"/>
+                    </p:confirmDialog>
+
+                    <p:confirmDialog widgetVar="reversebookDialog" showEffect="fade" width="300"
+                                     message="Kích hoạt lại cuốn sách?" header="Xác nhận" severity="warn">
+                        <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                         actionListener="#{booksController.reverseBookStatus}"
+                                         process="@this" update=":form:dt-books"
+                                         oncomplete="PF('reversebookDialog').hide()"/>
+                        <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('reversebookDialog').hide()"/>
+                    </p:confirmDialog>
+
+                    <p:confirmDialog global="true" showEffect="fade" width="300">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"
+                                         icon="pi pi-check"/>
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                         icon="pi pi-times"/>
+                    </p:confirmDialog>
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

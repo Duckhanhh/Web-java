@@ -10,6 +10,6 @@ public class DashboardController {
 
     @GetMapping("/home")
     public String homePage() {
-        return "index";
+        return "dashboard";
     }
 }

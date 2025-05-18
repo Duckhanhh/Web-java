@@ -20,6 +20,15 @@ public class BooksService {
     private BooksRepo booksRepo;
 
     /**
+     * Ham lay tat ca sach
+     *
+     * @return
+     */
+    public List<Books> findAllBook() throws Exception {
+        return booksRepo.findAll();
+    }
+
+    /**
      * Ham tim kiem tat ca sach
      *
      * @param title
@@ -76,5 +85,36 @@ public class BooksService {
      */
     public List<Books> findBookInStock(Long bookId, Date fromDate, Date toDate) throws Exception {
         return booksRepo.findBookInStock(bookId, fromDate, toDate);
+    }
+
+    /**
+     * Ham them sach
+     *
+     * @param book
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void insertBook(Books book) throws Exception {
+        if (book == null) {
+            throw new AppException("IB00001", "book.management.insert.book.empty");
+        }
+
+        //Kiem tra xem sach da ton tai hay chua
+        if (booksRepo.existsByTitle(book.getTitle())) {
+            throw new AppException("IB00001", "book.management.insert.book.exist");
+        }
+
+        book.setBookStatus(Books.BOOK_STATUS_ACTIVE);
+        book.setBookFormat(Books.BOOK_FORMAT_HARDCOVER);
+        book.setAddDate(new Date());
+
+        booksRepo.save(book);
+    }
+
+    public void deleteListBook(List<Long> idList) throws Exception {
+        if (idList == null || idList.isEmpty()) {
+            return;
+        }
+        booksRepo.deleteListBook(idList);
     }
 }

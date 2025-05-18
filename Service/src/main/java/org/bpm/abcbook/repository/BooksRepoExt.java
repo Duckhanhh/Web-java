@@ -13,4 +13,8 @@ public interface BooksRepoExt {
     void deleteBook(Long id) throws Exception;
 
     List<Books> findBookInStock(Long bookId, Date fromDate, Date toDate) throws Exception;
+
+    boolean existsByTitle(String title) throws Exception;
+
+    void deleteListBook(List<Long> idList) throws Exception;
 }
