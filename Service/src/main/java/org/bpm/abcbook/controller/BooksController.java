@@ -133,25 +133,25 @@ public class BooksController implements Serializable {
                 throw new AppException("UB00001", "book.management.update.book.empty");
             }
             if (updateBook != null) {
-                if (updateBook.getTitle() != null) {
+                if (updateBook.getTitle() != null && !updateBook.getTitle().isEmpty()) {
                     selectedBook.setTitle(updateBook.getTitle());
                 }
-                if (updateBook.getAuthor() != null) {
+                if (updateBook.getAuthor() != null && !updateBook.getAuthor().isEmpty()) {
                     selectedBook.setAuthor(updateBook.getAuthor());
                 }
-                if (updateBook.getDescription() != null) {
+                if (updateBook.getDescription() != null && !updateBook.getDescription().isEmpty()) {
                     selectedBook.setDescription(updateBook.getDescription());
                 }
-                if (updateBook.getCategory() != null) {
+                if (updateBook.getCategory() != null && !updateBook.getCategory().isEmpty()) {
                     selectedBook.setCategory(updateBook.getCategory());
                 }
-                if (updateBook.getImageUrl() != null) {
+                if (updateBook.getImageUrl() != null && !updateBook.getImageUrl().isEmpty()) {
                     selectedBook.setImageUrl(updateBook.getImageUrl());
                 }
                 if (updateBook.getPrice() != null) {
                     selectedBook.setPrice(updateBook.getPrice());
                 }
-                if (updateBook.getPublisher() != null) {
+                if (updateBook.getPublisher() != null && !updateBook.getPublisher().isEmpty()) {
                     selectedBook.setPublisher(updateBook.getPublisher());
                 }
             }
