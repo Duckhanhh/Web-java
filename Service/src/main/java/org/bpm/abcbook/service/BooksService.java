@@ -42,4 +42,8 @@ public interface BooksService {
     void insertBook(Books book) throws Exception;
 
     void deleteListBook(List<Long> idList) throws Exception;
+
+    List<Books> getAllNameAndCode() throws Exception;
+
+    List<String> getAllAuthor() throws Exception;
 }

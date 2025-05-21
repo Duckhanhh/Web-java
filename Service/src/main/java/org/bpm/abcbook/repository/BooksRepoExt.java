@@ -17,4 +17,8 @@ public interface BooksRepoExt {
     boolean existsByTitle(String title) throws Exception;
 
     void deleteListBook(List<Long> idList) throws Exception;
+
+    List<Books> getAllNameAndCode() throws Exception;
+
+    List<String> getAllAuthor() throws Exception;
 }

@@ -1,0 +1,336 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:cbs="http://java.sun.com/jsf/composite/tags"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        template="../sentinel/template.xhtml">
+    <ui:define name="title">#{lang['varinst.management']}</ui:define>
+    <ui:define name="featureName">#{lang['varinst.management']}</ui:define>
+    <ui:define name="content">
+        <style type="text/css">
+            .blackColor {
+                color: black;
+            }
+
+            .bottomLine {
+                border-bottom: 1px solid #B0BEC5 !important;
+                border-left: 0px !important;
+            }
+
+            .ui-selectcheckboxmenu-label {
+                color: black !important;
+            }
+        </style>
+        <h:form id="frmVarMng">
+            <p:focus for="@form"></p:focus>
+            <p:outputPanel id="pnMsgVar">
+                <div class="Container pd-bottom-0 mg-bottom-0">
+                    <p:messages id="msgVarMng" showDetail="true" showSummary="false" closable="true"/>
+                </div>
+            </p:outputPanel>
+
+            <!--Vung tim kiem-->
+            <p:outputPanel styleClass="Container" id="pnVarMng">
+                <cbs:panel classForToggle="varMng"
+                           titleHeader="#{lang['varinst.management.search.area']}"/>
+                <div class="container varMng">
+                    <div class="ContainerIndent">
+                        <div class="Container10" style="margin-left: 1%;">
+                            <p:outputLabel for="action"
+                                           value="#{lang['order.management.label.action.activity.option']}"/>
+                        </div>
+                        <div class="Container15" style="margin-left: 2%;">
+                            <p:selectOneMenu id="action"
+                                             value="#{varinstManagementController.action}"
+                                             panelStyle="width:100px;"
+                                             style="width:100%; font-size: 14px !important;"
+                                             required="true"
+                                             requiredMessage="#{lang['select.execute.batch.required']}"
+                                             styleClass="Line">
+                                <f:selectItem itemValue="1"
+                                              itemLabel="#{lang['order.management.label.action.activity.1']}"/>
+                                <f:selectItem itemValue="2"
+                                              itemLabel="#{lang['order.management.label.action.activity.2']}"/>
+                                <!--<p:ajax event="itemSelect" listener="#{varinstManagementController.selectCbbb}" />-->
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="Container100 pd-top-7">
+                        <!--Ma luong-->
+                        <div class="Container40" style="margin-left: 2%;">
+                            <div class="Container30">
+                                <p:outputLabel for="processId"
+                                               value="#{lang['varinst.management.process.id']}"/>
+                            </div>
+                            <div class="Container70">
+                                <p:inputText id="processId"
+                                             value="#{varinstManagementController.processId}"
+                                             maxlength="64"
+                                             onblur="this.value=this.value.trim()"/>
+                            </div>
+                        </div>
+                        <!--Ten truong-->
+                        <div class="Container40" style="margin-left: 3%;">
+                            <div class="Container30">
+                                <p:outputLabel for="fieldName"
+                                               value="#{lang['varinst.management.name']}"/>
+                            </div>
+                            <div class="Container70">
+                                <p:inputText id="fieldName"
+                                             value="#{varinstManagementController.name}"
+                                             maxlength="255"
+                                             onblur="this.value=this.value.trim()"/>
+                            </div>
+                        </div>
+                    </div>
+                    <!--tu ngay - den ngay-->
+                    <div class="Container100 pd-top-7">
+                        <!--Tu ngay-->
+                        <div class="Container40" style="margin-left: 2%;">
+                            <div class="Container30">
+                                <p:outputLabel value="#{lang['order.management.label.fromDate']}"
+                                               for="idFromDate"/>
+                            </div>
+                            <div class="Container70">
+                                <p:calendar id="idFromDate"
+                                            value="#{varinstManagementController.fromDateSearch}"
+                                            placeholder="dd/MM/yyyy HH:mm"
+                                            pattern="dd/MM/yyyy HH:mm"
+                                            mask="true"
+                                            converterMessage="#{lang['mn.order.type.date.not.format']}"/>
+                            </div>
+                        </div>
+                        <!--Den ngay-->
+                        <div class="Container40" style="margin-left: 3%;">
+                            <div class="Container30">
+                                <p:outputLabel value="#{lang['order.management.label.toDate']}"
+                                               for="idToDate"/>
+                            </div>
+                            <div class="Container70">
+                                <p:calendar id="idToDate"
+                                            value="#{varinstManagementController.toDateSearch}"
+                                            placeholder="dd/MM/yyyy HH:mm"
+                                            pattern="dd/MM/yyyy HH:mm"
+                                            mask="true"
+                                            converterMessage="#{lang['mn.order.type.date.not.format']}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Container100 pd-top-7" style="text-align: center; margin-top: 1%">
+                        <!--Tim kiem-->
+                        <p:commandButton value="#{lang['common.button.search']}"
+                                         actionListener="#{varinstManagementController.search}"
+                                         process="@form"
+                                         update="@([id$=msgVarMng]),@([id$=pnVarMng]),@([id$=pnSearchResult])"/>
+                        <!--Nhap lai-->
+                        <p:commandButton value="#{lang['common.keyboard.clear']}"
+                                         resetValues="true"
+                                         actionListener="#{varinstManagementController.clearDataSearch()}"
+                                         update="@([id$=msgVarMng]),@([id$=pnVarMng])"
+                                         style="margin-left: 0.5%"/>
+                        <p:commandButton value="#{lang['common.add']}"
+                                         resetValues="true"
+                                         process="@this"
+                                         update="@form,@([id$=dlgAddVarinst])"
+                                         action="#{varinstManagementController.preInsert}"
+                                         style="margin-left: 0.5%"
+                                         oncomplete="PF('dlgAddVarinst').show();"/>
+                    </div>
+                </div>
+            </p:outputPanel>
+
+            <!--Vung ket qua tim kiem-->
+            <p:outputPanel styleClass="Container"
+                           style="margin-top: 1%"
+                           id="pnSearchResult">
+                <cbs:panel classForToggle="searchResult"
+                           titleHeader="#{lang['varinst.management.search.result.area']}"/>
+                <p:commandLink
+                        value="#{lang['button.export.excel']}"
+                        ajax="false"
+                        immediate="true"
+                        style="" styleClass="fa icon-plus Fs14 blue md-link">
+                    <p:fileDownload
+                            value="#{varinstManagementController.downloadFileExcelResult()}"/>
+                </p:commandLink>
+                <!--disabled="#{empty varinstManagementController.lstVarinst}"-->
+                <div class="container searchResult">
+                    <div class="Container100 pd-top-7">
+                        <p:dataTable
+                                id="tblv"
+                                value="#{varinstManagementController.renders ? varinstManagementController.lstVarinst : varinstManagementController.lstVarinstExt}"
+                                var="varinst"
+                                resizableColumns="true"
+                                paginator="true"
+                                paginatorAlwaysVisible="false"
+                                paginatorTemplate="#{lang['common.paging.paginatorTemplate']}"
+                                paginatorPosition="#{lang['common.paging.paginatorPosition']}"
+                                currentPageReportTemplate="#{lang['common.paging.currentPageReportTemplate']}"
+                                rowsPerPageTemplate="5,10,15"
+                                rows="10"
+                                rowIndexVar="index"
+                                scrollable="true"
+                                sortBy="#{varinst.name}"
+                                sortOrder="ascending"
+                                emptyMessage="#{lang['common.empty.records']}">
+                            <f:facet name="footer">
+                                <p:commandLink id="toggler"
+                                               value="#{lang['order.management.label.config.display']}"
+                                               style="float:right"
+                                               styleClass="fa icon-cog"/>
+                                <p:columnToggler datasource="tblv"
+                                                 trigger="toggler"/>
+                            </f:facet>
+                            <p:column headerText="#{lang['common.stt']}" style="width: 40px">
+                                <p:outputLabel styleClass="blackColor" value="#{index + 1}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.id']}"
+                                      styleClass="col-left" style="width: 50px"
+                                      sortBy="#{varinst.id}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.id}"
+                                               title="#{varinst.id}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.process.id']}"
+                                      styleClass="col-left" style="width: 100px"
+                                      sortBy="#{varinst.procInstId}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.procInstId}"
+                                               title="#{varinst.procInstId}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.execution.id']}"
+                                      styleClass="col-left" style="width: 100px"
+                                      sortBy="#{varinst.executionId}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.executionId}"
+                                               title="#{varinst.executionId}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.name']}"
+                                      styleClass="col-left" style="width: 100px"
+                                      sortBy="#{varinst.name}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.name}"
+                                               title="#{varinst.name}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.type']}"
+                                      styleClass="col-left" style="width: 100px"
+                                      sortBy="#{varinst.varType}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.varType}"
+                                               title="#{varinst.varType}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.byte.array.id']}"
+                                      styleClass="col-left" style="width: 120px"
+                                      sortBy="#{varinst.bytearrayId}">
+                                <p:commandLink value="#{varinst.bytearrayId}"
+                                               title="#{varinst.bytearrayId}"
+                                               actionListener="#{varinstManagementController.getDetailArray(varinst.procInstId, varinst.name, varinst.executionId)}"
+                                               update="@form"
+                                               oncomplete="PF('dlgVarinstDetail').show();"
+                                               style="color: blue!important;"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.double']}"
+                                      styleClass="col-left" style="width: 110px"
+                                      sortBy="#{varinst.doubleValue}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.doubleValue}"
+                                               title="#{varinst.doubleValue}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.long']}"
+                                      styleClass="col-left" style="width: 100px"
+                                      sortBy="#{varinst.longValue}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.longValue}"
+                                               title="#{varinst.longValue}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.text']}"
+                                      styleClass="col-left" style="width: 100px"
+                                      sortBy="#{varinst.textValue}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.textValue}"
+                                               title="#{varinst.textValue}"/>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.create.date']}"
+                                      styleClass="col-left" style="width: 100px"
+                                      sortBy="#{varinst.createTime}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.createTime}"
+                                               title="#{varinst.createTime}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="#{lang['varinst.management.update.date']}"
+                                      styleClass="col-left" style="width: 130px"
+                                      sortBy="#{varinst.lastUpdatedTime}">
+                                <p:outputLabel styleClass="blackColor"
+                                               value="#{varinst.lastUpdatedTime}"
+                                               title="#{varinst.lastUpdatedTime}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column styleClass="col-left"
+                                      style="width: 50px">
+                                <p:commandLink title="#{lang['common.edit']}"
+                                               styleClass="fa icon-edit"
+                                               process="@this"
+                                               resetValues="true"
+                                               update="@([id$=msgVarMng]),@([id$=dlgUpdateVar])"
+                                               actionListener="#{varinstManagementController.preUpdate(varinst)}"
+                                               oncomplete="if(!args.validationFailed){PF('dlgUpdateVar').show()}"/>
+                                <p:commandLink title="#{lang['common.reset.value']}"
+                                               styleClass="fa icon-ccw"
+                                               update="@([id$=msgVarMng]),@([id$=pnSearchResult])"
+                                               actionListener="#{varinstManagementController.resetVariable(varinst)}">
+                                    <p:confirm header="#{lang['common.delete.confirm']}"
+                                               message="#{lang['varinst.management.msg.reset.confirm']}"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </p:outputPanel>
+
+            <!--dialog xem chi tiet-->
+            <p:dialog widgetVar="dlgVarinstDetail" id="dlgVarinstDetail" appendTo="@(body)" closable="true"
+                      closeOnEscape="true" dynamic="true" resizable="true" maximizable="true"
+                      header="#{lang['varinst.management.detail']}"
+                      width="80%"
+                      onShow="reloadmsgVarManagement()"
+                      modal="true" position="center" minWidth="700">
+                <div class="Container100">
+                    <p:inputTextarea readonly="true" style="width: 100%"
+                                     value="#{varinstManagementController.detail}"/>
+                </div>
+                <p:remoteCommand name="reloadmsgVarManagement"
+                                 update="@([id$=msgVarMng])"/>
+            </p:dialog>
+
+            <!--dialog them moi gia tri-->
+            <p:dialog widgetVar="dlgAddVarinst" id="dlgAddVarinst" appendTo="@(body)"
+                      closable="true"
+                      closeOnEscape="true" dynamic="true" resizable="false" maximizable="true"
+                      width="60%"
+                      header="#{lang['varinst.management.add.header']}"
+                      modal="true" position="center" minWidth="700" style="overflow: scroll; max-height: 90%">
+                <ui:include src="dialog/dlgAddVarinst.xhtml"/>
+            </p:dialog>
+
+            <!--dialog cap nhat gia tri-->
+            <p:dialog widgetVar="dlgUpdateVar" id="dlgUpdateVar" appendTo="@(body)" closable="true"
+                      closeOnEscape="true" dynamic="true" resizable="false" maximizable="true"
+                      header="#{lang['varinst.management.update']}"
+                      onShow="reloadmsgVarManagement()"
+                      width="80%"
+                      modal="true" position="center" minWidth="700" >
+                <ui:include src="/pages/bccs2/order/dialog/dlgUpdateVarinst.xhtml"/>
+                <p:remoteCommand name="reloadmsgVarManagement"
+                                 update="@([id$=msgVarMng])"/>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -125,4 +125,14 @@ public class BooksServiceImpl implements BooksService {
         }
         booksRepo.deleteListBook(idList);
     }
+
+    @Override
+    public List<Books> getAllNameAndCode() throws Exception {
+        return booksRepo.getAllNameAndCode();
+    }
+
+    @Override
+    public List<String> getAllAuthor() throws Exception {
+        return booksRepo.getAllAuthor();
+    }
 }

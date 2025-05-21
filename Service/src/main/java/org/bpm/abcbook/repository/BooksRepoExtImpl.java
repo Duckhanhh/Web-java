@@ -162,4 +162,16 @@ public class BooksRepoExtImpl implements BooksRepoExt{
         }
         query.executeUpdate();
     }
+
+    @Override
+    public List<Books> getAllNameAndCode() throws Exception {
+        Query query = em.createNativeQuery("SELECT book_id, title, book_code FROM Books", Books.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> getAllAuthor() throws Exception {
+        Query query = em.createNativeQuery("SELECT DISTINCT author FROM Books");
+        return query.getResultList();
+    }
 }

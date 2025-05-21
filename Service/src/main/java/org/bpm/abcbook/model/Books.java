@@ -48,4 +48,13 @@ public class Books {
     private String category;
     @Column(name = "add_date")
     private Date addDate;
+    @Column(name = "book_code")
+    private String bookCode;
+    @Column(name = "create_staff")
+    private String createStaff;
+    @Column(name = "update_staff")
+    private String updateStaff;
+    @Column(name = "update_date")
+    private Date updateDate;
+
 }
