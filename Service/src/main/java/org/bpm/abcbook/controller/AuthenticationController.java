@@ -3,6 +3,7 @@ package org.bpm.abcbook.controller;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import lombok.Data;
 import org.bpm.abcbook.dto.request.AuthenticationRequest;
 import org.bpm.abcbook.dto.request.IntrospectRequest;
 import org.bpm.abcbook.dto.response.ApiResponse;
+import org.bpm.abcbook.dto.response.AuthenticationResponse;
 import org.bpm.abcbook.exception.AppException;
 import org.bpm.abcbook.service.AuthenticationService;
 import org.slf4j.Logger;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/auth")
 @Component
 @ViewScoped
 @Named
@@ -34,22 +35,37 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @PostMapping("login")
+    @Inject
+    private UserSessionBean userSessionBean;
+
     public String login() throws Exception {
         try {
-            authenticationService.login(new AuthenticationRequest(email, password));
+            AuthenticationResponse authResponse = authenticationService.login(new AuthenticationRequest(email, password));
+
+            userSessionBean.setUserSession(
+                    authResponse.getStaffResponse(),
+                    authResponse.getToken(),
+                    authResponse
+            );
+
             return "dashboard?faces-redirect=true";
         } catch (Exception e) {
             logger.error(e.getMessage());
             errorMessage = e.getMessage();
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage()));
-            return null; // Trả về null để không chuyển hướng
+            return null;
         }
     }
 
-    @PostMapping("introspect")
-    public ApiResponse introspect(@RequestBody @Valid IntrospectRequest introspectRequest, HttpServletRequest request) {
+    public String logout() {
+        userSessionBean.clearSession();
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        return "login?faces-redirect=true";
+    }
+
+    public ApiResponse introspect(@RequestBody
+                                  @Valid IntrospectRequest introspectRequest, HttpServletRequest request) {
         try {
             return ApiResponse.builder()
                     .code(null)

@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InventoryRepo extends JpaRepository<Inventory, Long> {
+public interface InventoryRepo extends JpaRepository<Inventory, Long>, InventoryRepoExt {
     // Custom query methods can be defined here if needed
 }

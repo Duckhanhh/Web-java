@@ -465,3 +465,13 @@ img{ border:none; border:0px;}
 .Container:after {
     clear: both;
 }
+
+.content {
+    margin-top: 10px;
+    margin-left: 290px;
+    width: calc(100%);
+    box-sizing: border-box;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: auto;
+}

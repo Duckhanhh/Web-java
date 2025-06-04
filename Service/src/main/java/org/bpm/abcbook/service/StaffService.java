@@ -27,8 +27,8 @@ public class StaffService {
     }
 
 //    @PreAuthorize("hasRole('ADMIN')")
-    public List<StaffResponse> getAllUsers() {
-        return staffRepo.findAll().stream().map(staffMapper::toUserResponse).toList();
+    public List<StaffResponse> getAllStaffs() {
+        return staffRepo.findAll().stream().map(staffMapper::toStaffResponse).toList();
     }
 
     public void createStaff(StaffRequest staffData) throws AppException {

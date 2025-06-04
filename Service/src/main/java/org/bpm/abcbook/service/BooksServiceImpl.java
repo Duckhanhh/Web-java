@@ -135,4 +135,9 @@ public class BooksServiceImpl implements BooksService {
     public List<String> getAllAuthor() throws Exception {
         return booksRepo.getAllAuthor();
     }
+
+    @Override
+    public List<String> getAllCategory() throws Exception {
+        return booksRepo.getAllCategory();
+    }
 }

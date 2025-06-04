@@ -1,20 +1,17 @@
 package org.bpm.abcbook.service;
 
-
+import org.bpm.abcbook.dto.BookDTO;
 import org.bpm.abcbook.model.Inventory;
-import org.bpm.abcbook.repository.InventoryRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
-@Service
-public class InventoryService {
+public interface InventoryService {
+    List<Inventory> getAllBookInStock() throws Exception;
 
-    @Autowired
-    private InventoryRepo inventoryRepo;
+    List<BookDTO> findBookInStock(List<String> insertUser, Date fromDate, Date toDate, Long statusInStock, List<Long> listBookId,
+                                  Long bookFormat, List<String> listCategory, List<String> listSupplierCode, int rating,
+                                  Long fromPrice, Long toPrice) throws Exception;
 
-    List<Inventory> getAllBookInStock() {
-        return inventoryRepo.findAll();
-    }
+    void updateStatusBookInStock(BookDTO bookDTO) throws Exception;
 }

@@ -36,7 +36,7 @@ public class StaffController {
                 .code(null)
                 .success(true).build();
         try {
-            apiResponse.setData(staffService.getAllUsers());
+            apiResponse.setData(staffService.getAllStaffs());
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new AppException("GAU0000", "common.system.error");

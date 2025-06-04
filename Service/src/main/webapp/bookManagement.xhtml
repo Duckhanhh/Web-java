@@ -240,33 +240,37 @@
                                         <div class="field">
                                             <p:outputLabel for="name">Tên</p:outputLabel>
                                             <p:inputText id="name"
+                                                         readonly="true"
                                                          value="#{booksController.selectedBook.title}"/>
                                         </div>
                                         <div class="field" style="margin-top: 1rem">
                                             <p:outputLabel for="author">Tác giả</p:outputLabel>
-                                            <p:inputText id="author" value="#{booksController.selectedBook.author}"/>
+                                            <p:inputText id="author" readonly="true" value="#{booksController.selectedBook.author}"/>
                                         </div>
                                         <div class="field" style="margin-top: 1rem">
                                             <p:outputLabel for="description">Mô tả</p:outputLabel>
                                             <p:inputTextarea id="description"
+                                                             readonly="true"
                                                              value="#{booksController.selectedBook.description}"/>
                                         </div>
                                         <div class="field" style="margin-top: 1rem">
                                             <p:outputLabel for="category">Thể loại</p:outputLabel>
                                             <p:inputTextarea id="category"
+                                                             readonly="true"
                                                              value="#{booksController.selectedBook.category}"/>
                                         </div>
                                     </div>
                                     <div style="flex: 1;">
                                         <div class="field" style="margin-top: 1rem;">
                                             <p:outputLabel for="url">URL ảnh bìa</p:outputLabel>
-                                            <p:inputTextarea id="url" value="#{booksController.selectedBook.imageUrl}"/>
+                                            <p:inputTextarea id="url" readonly="true" value="#{booksController.selectedBook.imageUrl}"/>
                                         </div>
                                         <div class="formgrid grid" style="margin-top: 1rem;">
                                             <div class="field col">
                                                 <p:outputLabel for="price">Giá bán</p:outputLabel>
                                                 <p:inputNumber id="price" value="#{booksController.selectedBook.price}"
                                                                symbol=" VND"
+                                                               readonly="true"
                                                                symbolPosition="s" decimalSeparator="."
                                                                thousandSeparator=","/>
                                             </div>
@@ -275,6 +279,7 @@
                                         <div class="field" style="margin-top: 1rem">
                                             <p:outputLabel for="supplier">Nhà xuất bản</p:outputLabel>
                                             <p:inputTextarea id="supplier"
+                                                             readonly="true"
                                                              value="#{booksController.selectedBook.publisher}"/>
                                         </div>
                                     </div>

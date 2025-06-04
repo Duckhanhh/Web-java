@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenticationResponse {
     private String token;
+    private StaffResponse staffResponse;
     private boolean authenticated;
 }

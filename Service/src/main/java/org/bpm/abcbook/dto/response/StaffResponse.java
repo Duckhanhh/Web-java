@@ -19,4 +19,5 @@ public class StaffResponse {
     private String lastName;
     private Date registrationDate;
     private String role;
+    private String staffCode;
 }

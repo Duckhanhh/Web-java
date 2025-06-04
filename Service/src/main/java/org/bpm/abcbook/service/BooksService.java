@@ -46,4 +46,6 @@ public interface BooksService {
     List<Books> getAllNameAndCode() throws Exception;
 
     List<String> getAllAuthor() throws Exception;
+
+    List<String> getAllCategory() throws Exception;
 }

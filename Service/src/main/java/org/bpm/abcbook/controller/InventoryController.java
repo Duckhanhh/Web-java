@@ -6,54 +6,145 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import lombok.Data;
+import org.bpm.abcbook.Const;
+import org.bpm.abcbook.dto.BookDTO;
+import org.bpm.abcbook.dto.response.StaffResponse;
 import org.bpm.abcbook.model.Books;
-import org.bpm.abcbook.model.Inventory;
-import org.bpm.abcbook.service.BooksService;
-import org.bpm.abcbook.service.InventoryService;
+import org.bpm.abcbook.model.Suppliers;
+import org.bpm.abcbook.service.*;
+import org.primefaces.PrimeFaces;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+
+import static org.hibernate.internal.CoreLogging.logger;
 
 @Controller
 @Named
 @Data
 @ViewScoped
 public class InventoryController {
-    private List<Inventory> inventoryList;
+    private static final Logger logger = LoggerFactory.getLogger(InventoryController.class);
+    private List<BookDTO> resultList;
     private List<Books> bookList;
-    private List<Books> listBookSelected;
+    private List<Long> listBookSelected;
     private Long bookFormat; //dinh dang sach
     private List<String> listAuthor; //danh sach tac gia
     private List<String> listSelectedAuthor; //danh sach tac gia duoc chon
+    private List<String> listCategory; //danh sach the loai
+    private List<String> listSelectedCategory; //danh sach the loai duoc chon
+    private List<Suppliers> suppliersList; //danh sach nha cung cap
+    private List<String> listSelectedCodeSupplier; //danh sach nha cung cap duoc chon
+    private Map<String, String> categoryLabels;
+    private Long status; //trang thai sach trong kho
+    private List<StaffResponse> listStaff; //danh sach nhan vien
+    private List<String> listSelectedStaff; //danh sach nhan vien duoc chon
+    private List<Date> listSelectedDate; //danh sach ngay nhap kho
+    private int rating; //danh gia
+    private List<Books> listBookInStock; //danh sach sach trong kho
+    private Long fromPrice; //gia tu
+    private Long toPrice; //gia den
+    private Map<String, String> supplierLabels; // nhãn cho nhà cung cấp
+    private BookDTO selectedBook; // sách được chọn
 
     @Autowired
     private InventoryService inventoryService;
     @Autowired
     private BooksService booksService;
+    @Autowired
+    private SuppliersService suppliersService;
+    @Autowired
+    private StaffService staffService;
 
     @PostConstruct
     public void init() {
         //Lay ra danh sach sach
         try {
-            listBookSelected = new ArrayList<>();
+            clearDataSearch();
+            categoryLabels = Const.BOOK_CATEGORY_LABELS;
+            supplierLabels = Const.SUPPLIER_LABELS;
             bookList = booksService.findAllBook();
             listAuthor = booksService.getAllAuthor();
-            listSelectedAuthor = new ArrayList<>();
+            listCategory = booksService.getAllCategory();
+            suppliersList = suppliersService.findAllSuppliers();
+            listStaff = staffService.getAllStaffs();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage()));
         }
     }
 
-    public String getSelectedBooksLabel() {
-        List<String> selectedTitles = bookList.stream()
-                .filter(book -> listBookSelected.contains(book))
-                .map(Books::getTitle)
-                .collect(Collectors.toList());
+    public void clearDataSearch() {
+        status = null;
+        bookFormat = null;
+        rating = 0;
+        fromPrice = null;
+        toPrice = null;
+        listBookSelected = new ArrayList<>();
+        listSelectedAuthor = new ArrayList<>();
+        listSelectedCategory = new ArrayList<>();
+        listSelectedCodeSupplier = new ArrayList<>();
+        listSelectedStaff = new ArrayList<>();
+        listSelectedDate = new ArrayList<>();
+        resultList = new ArrayList<>();
+    }
 
-        // Join the titles with a comma
-        return String.join(", ", selectedTitles);
+    public void searchInventory() {
+        try {
+            Date fromDate = null;
+            Date toDate = null;
+            if (listSelectedDate != null && !listSelectedDate.isEmpty()) {
+                fromDate = listSelectedDate.getFirst();
+                toDate = listSelectedDate.getLast();
+            }
+
+            resultList = inventoryService.findBookInStock(listSelectedStaff, fromDate, toDate, status, listBookSelected,
+                    bookFormat, listSelectedCategory, listSelectedCodeSupplier, rating, fromPrice, toPrice);
+            if (resultList == null || resultList.isEmpty()) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Không tìm thấy kết quả nào", ""));
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Có lỗi xảy ra trong quá trình tìm kiếm", e.getMessage()));
+        }
+    }
+
+    public void prepareEdit(BookDTO bookDTO) {
+        selectedBook = bookDTO;
+    }
+
+    public void reverseBookStatusInStock() {
+        try {
+            if (selectedBook == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Chưa chọn sách để cập nhật trạng thái", ""));
+                return;
+            }
+            selectedBook.setBookStatusInStock(1L);
+            inventoryService.updateStatusBookInStock(selectedBook);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cập nhật trạng thái sách thành công"));
+            searchInventory();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Có lỗi xảy ra trong quá trình cập nhật trạng thái sách", e.getMessage()));
+        }
+    }
+
+    public void deleteBookInStock() {
+        try {
+            if (selectedBook == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Chưa chọn sách để xóa", ""));
+                return;
+            }
+            selectedBook.setBookStatusInStock(0L);
+            inventoryService.updateStatusBookInStock(selectedBook);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Xóa sách thành công"));
+            searchInventory();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Có lỗi xảy ra trong quá trình xóa sách", e.getMessage()));
+        }
     }
 }

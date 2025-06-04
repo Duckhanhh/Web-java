@@ -6,11 +6,13 @@ import jakarta.persistence.Query;
 import org.bpm.abcbook.model.Books;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BooksRepoExtImpl implements BooksRepoExt{
+public class BooksRepoExtImpl implements BooksRepoExt {
     @PersistenceContext()
     private EntityManager em;
 
@@ -165,13 +167,24 @@ public class BooksRepoExtImpl implements BooksRepoExt{
 
     @Override
     public List<Books> getAllNameAndCode() throws Exception {
+        PreparedStatement ps;
+        ps = em.unwrap(java.sql.Connection.class).prepareStatement("SELECT book_id, title, book_code FROM Books");
+        ResultSet result = ps.executeQuery();
+
         Query query = em.createNativeQuery("SELECT book_id, title, book_code FROM Books", Books.class);
         return query.getResultList();
+
     }
 
     @Override
     public List<String> getAllAuthor() throws Exception {
         Query query = em.createNativeQuery("SELECT DISTINCT author FROM Books");
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> getAllCategory() throws Exception {
+        Query query = em.createNativeQuery("SELECT DISTINCT category FROM Books");
         return query.getResultList();
     }
 }

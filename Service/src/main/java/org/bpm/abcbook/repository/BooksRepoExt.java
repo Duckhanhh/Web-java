@@ -21,4 +21,6 @@ public interface BooksRepoExt {
     List<Books> getAllNameAndCode() throws Exception;
 
     List<String> getAllAuthor() throws Exception;
+
+    List<String> getAllCategory() throws Exception;
 }

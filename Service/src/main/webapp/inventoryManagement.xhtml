@@ -5,79 +5,351 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="template.xhtml">
     <ui:define name="content">
+        <style type="text/css">
+            .blackColor {
+                color: black;
+            }
+        </style>
         <h:form id="formInventoryMng">
             <p:focus for="@form"></p:focus>
             <p:outputPanel id="pnMsg">
                 <div class="Container pd-bottom-0 mg-bottom-0">
                     <p:messages id="msgInventoryMng" autoUpdate="true" closable="true"
-                                showDetail="false" showSummary="false" severity="error"
-                                styleClass="msg-error"/>
+                                showDetail="false" showSummary="true"/>
                 </div>
             </p:outputPanel>
 
             <!--vung tim kiem-->
             <p:outputPanel styleClass="Container" id="pnInventoryMng">
-                <div class="Container inventoryMng">
-                    <div class="ContainerIndent">
-                        <div class="Container30">
-                            <div class="Container20" style="margin-left: 1%;">
-                                <p:outputLabel value="Tên sách" for="bookName"/>
+                <div class="card ui-fluid ">
+                    <div class="Container inventoryMng">
+                        <div class="ContainerIndent">
+                            <div class="Container30">
+                                <div class="Container20" style="margin-left: 1%;">
+                                    <p:outputLabel value="Tên sách" for="bookName"/>
+                                </div>
+                                <div class="Container70">
+                                    <p:selectCheckboxMenu id="bookName"
+                                                          value="#{inventoryController.listBookSelected}"
+                                                          panelStyle="width:250px;"
+                                                          emptyLabel="Tất cả"
+                                                          updateLabel="true"
+                                                          style="width:100%; font-size: 14px !important;"
+                                                          styleClass="Line"
+                                                          filter="true"
+                                                          multiple="true"
+                                                          filterMatchMode="contains">
+                                        <f:selectItems value="#{inventoryController.bookList}"
+                                                       var="book"
+                                                       itemValue="#{book.id}"
+                                                       itemLabel="#{book.title}"/>
+                                    </p:selectCheckboxMenu>
+                                </div>
                             </div>
-                            <div class="Container70">
-                                <p:selectCheckboxMenu id="bookName"
-                                                      value="#{inventoryController.listBookSelected}"
-                                                      panelStyle="width:250px;"
-                                                      style="width:100%; font-size: 14px !important;"
-                                                      styleClass="Line"
-                                                      filter="true"
-                                                      multiple="true"
-                                                      filterMatchMode="contains">
-                                    <f:selectItems value="#{inventoryController.bookList}"
-                                                   var="book"
-                                                   itemValue="#{book}"
-                                                   itemLabel="#{book.title}"/>
-                                </p:selectCheckboxMenu>
+
+                            <div class="Container30">
+                                <div class="Container30" style="margin-left: 7%;">
+                                    <p:outputLabel value="Định dạng sách" for="format"/>
+                                </div>
+                                <div class="Container60" style="margin-left: 1%;">
+                                    <p:selectOneMenu id="format"
+                                                     value="#{inventoryController.bookFormat}"
+                                                     style="width:100%; font-size: 14px !important;"
+                                                     styleClass="Line">
+                                        <f:selectItem itemValue="" itemLabel="Tất cả"/>
+                                        <f:selectItem itemValue="1" itemLabel="Bìa cứng"/>
+                                        <f:selectItem itemValue="2" itemLabel="eBook"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+
+                            <div class="Container30" style="margin-left: 7%;">
+                                <div class="Container20">
+                                    <p:outputLabel value="Tác giả" for="author"/>
+                                </div>
+                                <div class="Container60" style="margin-left: 1%;">
+                                    <p:selectCheckboxMenu id="author"
+                                                          value="#{inventoryController.listSelectedAuthor}"
+                                                          style="width:100%; font-size: 14px !important;"
+                                                          filter="true"
+                                                          updateLabel="true"
+                                                          emptyLabel="Tất cả"
+                                                          multiple="true"
+                                                          filterMatchMode="contains"
+                                                          styleClass="Line">
+                                        <f:selectItems value="#{inventoryController.listAuthor}"
+                                                       var="author"
+                                                       itemValue="#{author}"
+                                                       itemLabel="#{author}"/>
+                                    </p:selectCheckboxMenu>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="Container30">
-                            <div class="Container20" style="margin-left: 1%;">
-                                <p:outputLabel value="Định dạng sách" for="format"/>
+                        <div class="ContainerIndent" style="margin-top: 1%;">
+                            <div class="Container30">
+                                <div class="Container20" style="margin-left: 1%;">
+                                    <p:outputLabel value="Thể loại" for="category"/>
+                                </div>
+
+                                <div class="Container70">
+                                    <p:selectCheckboxMenu id="category"
+                                                          value="#{inventoryController.listSelectedCategory}"
+                                                          style="width:100%; font-size: 14px !important;"
+                                                          filter="true"
+                                                          emptyLabel="Tất cả"
+                                                          updateLabel="true"
+                                                          multiple="true"
+                                                          filterMatchMode="contains"
+                                                          styleClass="Line">
+                                        <f:selectItems value="#{inventoryController.listCategory}"
+                                                       var="category"
+                                                       itemValue="#{category}"
+                                                       itemLabel="#{booksController.categoryLabels[category]}"/>
+                                    </p:selectCheckboxMenu>
+                                </div>
                             </div>
-                            <div class="Container70">
-                                <p:selectOneMenu id="format"
-                                                 value="#{inventoryController.bookFormat}"
-                                                 style="width:100%; font-size: 14px !important;"
-                                                 styleClass="Line">
-                                    <f:selectItem itemValue="" itemLabel="Tất cả"/>
-                                    <f:selectItem itemValue="1" itemLabel="Bìa cứng"/>
-                                    <f:selectItem itemValue="2" itemLabel="eBook"/>
-                                </p:selectOneMenu>
+
+                            <div class="Container30">
+                                <div class="Container30" style="margin-left: 7%;">
+                                    <p:outputLabel value="Nhà xuất bản" for="publisher"/>
+                                </div>
+                                <div class="Container60" style="margin-left: 1%;">
+                                    <p:selectCheckboxMenu id="publisher"
+                                                          value="#{inventoryController.listSelectedCodeSupplier}"
+                                                          style="width:100%; font-size: 14px !important;"
+                                                          filter="true"
+                                                          emptyLabel="Tất cả"
+                                                          updateLabel="true"
+                                                          multiple="true"
+                                                          filterMatchMode="contains"
+                                                          styleClass="Line">
+                                        <f:selectItems value="#{inventoryController.suppliersList}"
+                                                       var="publisher"
+                                                       itemValue="#{publisher.supplierCode}"
+                                                       itemLabel="#{publisher.supplierName}"/>
+                                    </p:selectCheckboxMenu>
+                                </div>
+                            </div>
+
+                            <div class="Container30" style="margin-left: 7%;">
+                                <div class="Container20">
+                                    <p:outputLabel value="Tình trạng" for="status"/>
+                                </div>
+                                <div class="Container60" style="margin-left: 1%;">
+                                    <p:selectOneMenu id="status"
+                                                     value="#{inventoryController.status}"
+                                                     style="width:100%; font-size: 14px !important;"
+                                                     styleClass="Line">
+                                        <f:selectItem itemValue="" itemLabel="Tất cả"/>
+                                        <f:selectItem itemValue="1" itemLabel="Hiệu lực"/>
+                                        <f:selectItem itemValue="2" itemLabel="Không hiệu lực"/>
+                                    </p:selectOneMenu>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="Container30">
-                            <div class="Container20" style="margin-left: 1%;">
-                                <p:outputLabel value="Tác giả" for="author"/>
+                        <div class="ContainerIndent" style="margin-top: 1%;">
+                            <div class="Container30">
+                                <div class="Container20" style="margin-left: 1%;">
+                                    <p:outputLabel value="Người thêm" for="createStaff"/>
+                                </div>
+                                <div class="Container70">
+                                    <p:selectCheckboxMenu id="createStaff"
+                                                          value="#{inventoryController.listSelectedStaff}"
+                                                          style="width:100%; font-size: 14px !important;"
+                                                          filter="true"
+                                                          emptyLabel="Tất cả"
+                                                          updateLabel="true"
+                                                          multiple="true"
+                                                          filterMatchMode="contains"
+                                                          styleClass="Line">
+                                        <f:selectItems value="#{inventoryController.listStaff}"
+                                                       var="staff"
+                                                       itemValue="#{staff.staffCode}"
+                                                       itemLabel="#{staff.firstName}"/>
+                                    </p:selectCheckboxMenu>
+                                </div>
                             </div>
-                            <div class="Container70">
-                                <p:selectCheckboxMenu id="author"
-                                                      value="#{inventoryController.listSelectedAuthor}"
-                                                      style="width:100%; font-size: 14px !important;"
-                                                      filter="true"
-                                                      multiple="true"
-                                                      filterMatchMode="contains"
-                                                      styleClass="Line">
-                                    <f:selectItems value="#{inventoryController.listAuthor}"
-                                                   var="author"
-                                                   itemValue="#{author}"
-                                                   itemLabel="#{author}"/>
-                                </p:selectCheckboxMenu>
+
+                            <div class="Container30">
+                                <div class="Container30" style="margin-left: 7%;">
+                                    <p:outputLabel value="Ngày thêm" for="createDate"/>
+                                </div>
+                                <div class="Container60" style="margin-left: 1%;">
+                                    <p:datePicker id="createDate" selectionMode="range"
+                                                  value="#{inventoryController.listSelectedDate}"
+                                                  readonlyInput="true"
+                                                  pattern="dd/MM/yyyy"/>
+                                </div>
                             </div>
+
+                            <div class="Container30" style="margin-left: 7%;">
+                                <div class="Container20">
+                                    <p:outputLabel value="Đánh giá" for="rating"/>
+                                </div>
+                                <div class="Container60" style="margin-left: 1%">
+                                    <p:selectOneMenu id="rating"
+                                                     value="#{inventoryController.rating}"
+                                                     style="width:100%; font-size: 14px !important;"
+                                                     styleClass="Line">
+                                        <f:selectItem itemValue="" itemLabel="Tất cả"/>
+                                        <f:selectItem itemValue="1" itemLabel="1 sao"/>
+                                        <f:selectItem itemValue="2" itemLabel="2 sao"/>
+                                        <f:selectItem itemValue="3" itemLabel="3 sao"/>
+                                        <f:selectItem itemValue="4" itemLabel="4 sao"/>
+                                        <f:selectItem itemValue="5" itemLabel="5 sao"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ContainerIndent" style="margin-top: 1%; margin-left: 10%;">
+                            <div class="Container40" style="margin-left: 8%;">
+                                <div class="Container30">
+                                    <p:outputLabel value="Giá từ" for="priceFrom" style="margin-left: 50%;"/>
+                                </div>
+                                <div class="Container60">
+                                    <p:inputText id="priceFrom"
+                                                 value="#{inventoryController.fromPrice}"
+                                                 style="width:60%; font-size: 14px !important;"
+                                                 onkeypress="return /^[0-9]$/.test(String.fromCharCode(event.charCode))"/>
+                                </div>
+                            </div>
+
+                            <div class="Container40">
+                                <div class="Container20">
+                                    <p:outputLabel value="Giá đến" for="priceTo" style="margin-left: 20%;"/>
+                                </div>
+                                <div class="Container60">
+                                    <p:inputText id="priceTo"
+                                                 value="#{inventoryController.toPrice}"
+                                                 style="width:60%; font-size: 14px !important;"
+                                                 onkeypress="return /^[0-9]$/.test(String.fromCharCode(event.charCode))"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="Container100 pd-top-7"
+                             style="justify-content: center; align-items: center; text-align: center; margin-top: 1%; display: flex;">
+                            <p:commandButton value="Tìm kiếm"
+                                             action="#{inventoryController.searchInventory}"
+                                             style="width: auto; min-width: unset; margin-left: 1%;"
+                                             process="@form"
+                                             update="msgInventoryMng,pnResult"/>
+                            <p:commandButton value="Đặt lại"
+                                             action="#{inventoryController.clearDataSearch}"
+                                             update="@([id$=pnInventoryMng]), @([id$=msgInventoryMng])"
+                                             style="width: auto; min-width: unset; margin-left: 1%;"/>
                         </div>
                     </div>
                 </div>
             </p:outputPanel>
+
+            <!--vung ket qua-->
+            <p:outputPanel styleClass="Container"
+                           style="margin-top: 1%; margin-bottom: 1%;"
+                           id="pnResult">
+                <div class="Container searchResult">
+                    <div class="Container100 pd-top-7">
+                        <p:dataTable
+                                id="tbvl"
+                                value="#{inventoryController.resultList}"
+                                var="bookInStock"
+                                resizableColumns="true"
+                                scrollable="true"
+                                scrollWidth="100%"
+                                tableStyle="min-width: 1200px; table-layout: fixed;"
+                                paginator="true"
+                                paginatorAlwaysVisible="true"
+                                rowsPerPageTemplate="5,10,15"
+                                rows="10"
+                                rowIndexVar="index"
+                                paginatorPosition="bottom"
+                                emptyMessage="Không có dữ liệu">
+                            <p:column headerText="STT" style="width: 60px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{index + 1}"/>
+                            </p:column>
+                            <p:column headerText="Tên sách" style="width: 200px;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.title}"/>
+                            </p:column>
+                            <p:column headerText="Tác giả" style="width: 150px;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.author}"/>
+                            </p:column>
+                            <p:column headerText="Thể loại" style="width: 150px;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{inventoryController.categoryLabels[bookInStock.category]}"/>
+                            </p:column>
+                            <p:column headerText="Nhà xuất bản" style="width: 200px;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.publisher}"/>
+                            </p:column>
+                            <p:column headerText="Định dạng" style="width: 100px;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{bookInStock.bookFormat eq 1 ? 'Bìa cứng' : 'eBook'}"/>
+                            </p:column>
+                            <p:column headerText="Giá" style="width: 100px; text-align: right;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.price}"/>
+                            </p:column>
+                            <p:column headerText="Đánh giá" style="width: 120px; text-align: center;">
+                                <p:rating value="#{bookInStock.rating.intValue()}" readonly="true"/>
+                            </p:column>
+                            <p:column headerText="Số lượng" style="width: 100px; text-align: right;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.quantity}"/>
+                            </p:column>
+                            <p:column headerText="Người thêm" style="width: 150px;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.insertUser}"/>
+                            </p:column>
+                            <p:column headerText="Tình trạng" style="width: 120px;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{bookInStock.bookStatusInStock eq 1 ? 'Hiệu lực' : 'Không hiệu lực'}"/>
+                            </p:column>
+                            <p:column headerText="Ngày thêm" style="width: 120px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.insertDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column exportable="false" ariaHeaderText="Actions" style="width: 100px;">
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                                 process="@this"
+                                                 rendered="#{bookInStock.bookStatusInStock eq 1}"
+                                                 style="margin-left: 5px;"
+                                                 oncomplete="PF('deletebookDialog').show()"
+                                                 actionListener="#{inventoryController.prepareEdit(bookInStock)}">
+                                </p:commandButton>
+                                <p:commandButton class="rounded-button" icon="pi pi-undo"
+                                                 process="@this"
+                                                 rendered="#{bookInStock.bookStatusInStock eq 0}"
+                                                 style="margin-left: 5px;"
+                                                 oncomplete="PF('reversebookDialog').show()"
+                                                 actionListener="#{inventoryController.prepareEdit(bookInStock)}">
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </h:form>
+
+        <h:form id="dialogs">
+            <p:confirmDialog widgetVar="deletebookDialog" showEffect="fade" width="300"
+                             message="Xoá sách?" header="Xác nhận" severity="warn">
+                <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                 actionListener="#{inventoryController.deleteBookInStock}"
+                                 process="@this" update="@([id$=tbvl]), @([id$=msgInventoryMng])"
+                                 oncomplete="PF('deletebookDialog').hide()"/>
+                <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deletebookDialog').hide()"/>
+            </p:confirmDialog>
+
+            <p:confirmDialog widgetVar="reversebookDialog" showEffect="fade" width="300"
+                             message="Kích hoạt lại sách?" header="Xác nhận" severity="warn">
+                <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                 actionListener="#{inventoryController.reverseBookStatusInStock}"
+                                 process="@this" update="@([id$=tbvl]), @([id$=msgInventoryMng])"
+                                 oncomplete="PF('reversebookDialog').hide()"/>
+                <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('reversebookDialog').hide()"/>
+            </p:confirmDialog>
         </h:form>
     </ui:define>
 </ui:composition>

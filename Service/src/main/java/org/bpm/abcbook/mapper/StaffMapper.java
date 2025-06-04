@@ -9,5 +9,5 @@ import org.mapstruct.Mapper;
 public interface StaffMapper {
     Staff staffRequestToStaff(StaffRequest staffRequest);
 
-    StaffResponse toUserResponse(Staff user);
+    StaffResponse toStaffResponse(Staff user);
 }
