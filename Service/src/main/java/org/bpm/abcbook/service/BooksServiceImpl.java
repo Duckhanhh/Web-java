@@ -66,16 +66,19 @@ public class BooksServiceImpl implements BooksService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateBook(Books book) throws Exception {
+    public void updateBook(Books book , String staffUpdate) throws Exception {
         if (book == null) {
             throw new AppException("UB00001", "book.management.update.book.empty");
         }
+
 
         //Kiem tra xem co ton tai hay khong
         if (!booksRepo.existsById(book.getId())) {
             throw new AppException("UB00001", "book.management.update.book.not.exist");
         }
 
+        book.setUpdateStaff(staffUpdate);
+        book.setUpdateDate(new Date());
         booksRepo.save(book);
     }
 

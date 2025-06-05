@@ -32,9 +32,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public List<BookDTO> findBookInStock(List<String> insertUser, Date fromDate, Date toDate, Long statusInStock, List<Long> listBookId,
                                          Long bookFormat, List<String> listCategory, List<String> listSupplierCode, int rating,
-                                         Long fromPrice, Long toPrice) throws Exception {
+                                         Long fromPrice, Long toPrice, List<String> listAuthor) throws Exception {
         return inventoryRepo.findAllInStock(insertUser, fromDate, toDate, statusInStock, listBookId, bookFormat, listCategory,
-                listSupplierCode, rating, fromPrice, toPrice);
+                listSupplierCode, rating, fromPrice, toPrice, listAuthor);
     }
 
     @Override

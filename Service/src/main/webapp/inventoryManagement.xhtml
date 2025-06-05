@@ -143,7 +143,7 @@
                                                      styleClass="Line">
                                         <f:selectItem itemValue="" itemLabel="Tất cả"/>
                                         <f:selectItem itemValue="1" itemLabel="Hiệu lực"/>
-                                        <f:selectItem itemValue="2" itemLabel="Không hiệu lực"/>
+                                        <f:selectItem itemValue="0" itemLabel="Không hiệu lực"/>
                                     </p:selectOneMenu>
                                 </div>
                             </div>
@@ -278,10 +278,10 @@
                             </p:column>
                             <p:column headerText="Thể loại" style="width: 150px;">
                                 <p:outputLabel styleClass="blackColor text-ellipsis"
-                                               value="#{inventoryController.categoryLabels[bookInStock.category]}"/>
+                                               value="#{bookInStock.category}"/>
                             </p:column>
                             <p:column headerText="Nhà xuất bản" style="width: 200px;">
-                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{bookInStock.publisher}"/>
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{inventoryController.supplierLabels[bookInStock.publisher]}"/>
                             </p:column>
                             <p:column headerText="Định dạng" style="width: 100px;">
                                 <p:outputLabel styleClass="blackColor text-ellipsis"

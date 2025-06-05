@@ -35,7 +35,7 @@ public interface BooksService {
 
     void deleteBook(Long id) throws Exception;
 
-    void updateBook(Books book) throws Exception;
+    void updateBook(Books book, String staffUpdate) throws Exception;
 
     List<Books> findBookInStock(Long bookId, Date fromDate, Date toDate) throws Exception;
 

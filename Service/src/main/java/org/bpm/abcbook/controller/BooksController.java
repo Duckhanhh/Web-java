@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Data;
 import org.bpm.abcbook.Const;
@@ -45,6 +46,7 @@ public class BooksController implements Serializable {
     private String descriptionUpdate;
     private String imageUrlUpdate;
     private Long priceUpdate;
+    private String currentStaff;
 
     // Map để ánh xạ category và nhãn hiển thị
     private Map<String, String> categoryLabels;
@@ -59,6 +61,8 @@ public class BooksController implements Serializable {
     private BooksMapper booksMapper;
     @Autowired
     private SuppliersService suppliersService;
+    @Inject
+    private UserSessionBean userSessionBean;
 
     @PostConstruct
     public void init() {
@@ -79,6 +83,7 @@ public class BooksController implements Serializable {
             statusFilterOptions.put(0L, "Không hiệu lực");
 
             bookCategory = Const.BookCategory.BOOK_CATEGORY;
+            currentStaff = userSessionBean == null || userSessionBean.getCurrentStaff() == null ? null : userSessionBean.getCurrentStaff().getStaffCode();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AppException("IB00000", e.getMessage());
@@ -154,7 +159,7 @@ public class BooksController implements Serializable {
                     selectedBook.setPublisher(updateBook.getPublisher());
                 }
             }
-            booksService.updateBook(selectedBook);
+            booksService.updateBook(selectedBook, currentStaff);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cập nhật thành công"));
             getAllBooks();
         } catch (Exception e) {
@@ -172,7 +177,7 @@ public class BooksController implements Serializable {
                 selectedBook.setBookStatus(Books.BOOK_STATUS_ACTIVE);
             }
 
-            booksService.updateBook(selectedBook);
+            booksService.updateBook(selectedBook, currentStaff);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Kích hoạt thành công"));
             getAllBooks();
         } catch (Exception e) {

@@ -22,7 +22,7 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
     @Transactional(readOnly = true)
     public List<BookDTO> findAllInStock(List<String> insertUser, Date fromDate, Date toDate, Long statusInStock, List<Long> listBookId,
                                         Long bookFormat, List<String> listCategory, List<String> listSupplierCode, int rating,
-                                        Long fromPrice, Long toPrice) {
+                                        Long fromPrice, Long toPrice, List<String> listAuthor) {
         StringBuilder sql = new StringBuilder("SELECT b.book_id, b.title, b.author, b.category, b.supplier_code, b.price, b.rating_average, i.status, b.book_format, b.description," +
                 " b.image_url, i.insert_date, b.book_code, i.insert_user" +
                 " FROM Inventory i INNER JOIN Books b ON i.book_id = b.book_id " +
@@ -33,16 +33,16 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
             sql.append(DbUtil.createInQuery("insertUser", insertUser));
         }
         if (fromDate != null) {
-            sql.append(" AND i.insertDate >= :fromDate ");
+            sql.append(" AND DATE(i.insert_date) >= DATE(:fromDate) ");
         }
         if (toDate != null) {
-            sql.append(" AND i.insertDate < :toDate + 1 ");
+            sql.append(" AND DATE(i.insert_date) <= DATE(:toDate) ");
         }
         if (statusInStock != null) {
             sql.append(" AND i.status = :statusInStock ");
         }
         if (listBookId != null && !listBookId.isEmpty()) {
-            sql.append(" AND i.listBookId ");
+            sql.append(" AND i.book_id ");
             sql.append(DbUtil.createInQuery("listBookId", listBookId));
         }
         if (bookFormat != null) {
@@ -65,11 +65,15 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
         if (toPrice != null) {
             sql.append(" AND b.price <= :toPrice ");
         }
+        if (listAuthor != null && !listAuthor.isEmpty()) {
+            sql.append(" AND b.author ");
+            sql.append(DbUtil.createInQuery("listAuthor", listAuthor));
+        }
 
         Query query = em.createNativeQuery(sql.toString());
 
         if (insertUser != null && !insertUser.isEmpty()) {
-            query.setParameter("insertUser", insertUser);
+            DbUtil.setParamInQuery(query, "insertUser", insertUser);
         }
         if (fromDate != null) {
             query.setParameter("fromDate", fromDate);
@@ -100,6 +104,9 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
         }
         if (toPrice != null) {
             query.setParameter("toPrice", toPrice);
+        }
+        if (listAuthor != null && !listAuthor.isEmpty()) {
+            DbUtil.setParamInQuery(query, "listAuthor", listAuthor);
         }
 
         List<Object[]> results = query.getResultList();

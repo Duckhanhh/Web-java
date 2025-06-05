@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hibernate.internal.CoreLogging.logger;
 
@@ -38,7 +39,6 @@ public class InventoryController {
     private List<String> listSelectedCategory; //danh sach the loai duoc chon
     private List<Suppliers> suppliersList; //danh sach nha cung cap
     private List<String> listSelectedCodeSupplier; //danh sach nha cung cap duoc chon
-    private Map<String, String> categoryLabels;
     private Long status; //trang thai sach trong kho
     private List<StaffResponse> listStaff; //danh sach nhan vien
     private List<String> listSelectedStaff; //danh sach nhan vien duoc chon
@@ -64,13 +64,13 @@ public class InventoryController {
         //Lay ra danh sach sach
         try {
             clearDataSearch();
-            categoryLabels = Const.BOOK_CATEGORY_LABELS;
-            supplierLabels = Const.SUPPLIER_LABELS;
             bookList = booksService.findAllBook();
             listAuthor = booksService.getAllAuthor();
             listCategory = booksService.getAllCategory();
             suppliersList = suppliersService.findAllSuppliers();
             listStaff = staffService.getAllStaffs();
+
+            supplierLabels = suppliersList.stream().collect(Collectors.toMap(Suppliers::getSupplierCode, Suppliers::getSupplierName));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage()));
         }
@@ -101,7 +101,7 @@ public class InventoryController {
             }
 
             resultList = inventoryService.findBookInStock(listSelectedStaff, fromDate, toDate, status, listBookSelected,
-                    bookFormat, listSelectedCategory, listSelectedCodeSupplier, rating, fromPrice, toPrice);
+                    bookFormat, listSelectedCategory, listSelectedCodeSupplier, rating, fromPrice, toPrice, listSelectedAuthor);
             if (resultList == null || resultList.isEmpty()) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_WARN, "Không tìm thấy kết quả nào", ""));

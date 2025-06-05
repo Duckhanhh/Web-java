@@ -9,7 +9,7 @@ import java.util.List;
 public interface InventoryRepoExt {
     List<BookDTO> findAllInStock(List<String> insertUser, Date fromDate, Date toDate, Long statusInStock, List<Long> listBookId,
                                  Long bookFormat, List<String> listCategory, List<String> listSupplierCode, int rating,
-                                 Long fromPrice, Long toPrice);
+                                 Long fromPrice, Long toPrice, List<String> listAuthor);
 
     Inventory findByBookId(Long bookId) throws Exception;
 }
