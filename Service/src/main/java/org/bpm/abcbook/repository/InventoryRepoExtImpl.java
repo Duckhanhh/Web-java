@@ -21,10 +21,10 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
     @Override
     @Transactional(readOnly = true)
     public List<BookDTO> findAllInStock(List<String> insertUser, Date fromDate, Date toDate, Long statusInStock, List<Long> listBookId,
-                                        Long bookFormat, List<String> listCategory, List<String> listSupplierCode, int rating,
+                                        Long bookFormat, List<String> listCategory, List<String> listSupplierCode, Integer rating,
                                         Long fromPrice, Long toPrice, List<String> listAuthor) {
         StringBuilder sql = new StringBuilder("SELECT b.book_id, b.title, b.author, b.category, b.supplier_code, b.price, b.rating_average, i.status, b.book_format, b.description," +
-                " b.image_url, i.insert_date, b.book_code, i.insert_user" +
+                " b.image_url, i.insert_date, b.book_code, i.insert_user, i.quantity" +
                 " FROM Inventory i INNER JOIN Books b ON i.book_id = b.book_id " +
                 " INNER JOIN Suppliers s ON b.supplier_code = s.supplier_code WHERE 1=1 ");
 
@@ -56,7 +56,7 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
             sql.append(" AND s.supplier_code ");
             sql.append(DbUtil.createInQuery("listSupplierCode", listSupplierCode));
         }
-        if (rating > 0) {
+        if (rating != null && rating > 0) {
             sql.append(" AND b.rating_average = :rating ");
         }
         if (fromPrice != null) {
@@ -96,7 +96,7 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
         if (listSupplierCode != null && !listSupplierCode.isEmpty()) {
             DbUtil.setParamInQuery(query, "listSupplierCode", listSupplierCode);
         }
-        if (rating > 0) {
+        if (rating != null && rating > 0) {
             query.setParameter("rating", rating);
         }
         if (fromPrice != null) {
@@ -114,20 +114,35 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
         for (Object[] row : results) {
             int i = 0;
             BookDTO dto = new BookDTO();
-            dto.setId(row[i] != null ? ((Number) row[i++]).longValue() : null);
-            dto.setTitle(row[i] != null ? row[i++].toString() : null);
-            dto.setAuthor(row[i] != null ? row[i++].toString() : null);
-            dto.setCategory(row[i] != null ? row[i++].toString() : null);
-            dto.setPublisher(row[i] != null ? row[i++].toString() : null);
-            dto.setPrice(row[i] != null ? ((Number) row[i++]).longValue() : null);
-            dto.setRating(row[i] != null ? ((Number) row[i++]).doubleValue() : 0.0);
-            dto.setBookStatusInStock(row[i] != null ? ((Number) row[i++]).longValue() : null);
-            dto.setBookFormat(row[i] != null ? ((Number) row[i++]).longValue() : null);
-            dto.setDescription(row[i] != null ? row[i++].toString() : null);
-            dto.setImageUrl(row[i] != null ? row[i++].toString() : null);
-            dto.setInsertDate(row[i] != null ? (Date) row[i++] : null);
-            dto.setBookCode(row[i] != null ? row[i++].toString() : null);
-            dto.setInsertUser(row[i] != null ? row[i++].toString() : null);
+            dto.setId(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setTitle(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setAuthor(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setCategory(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setPublisher(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setPrice(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setRating(row[i] != null ? ((Number) row[i]).doubleValue() : 0.0);
+            i++;
+            dto.setBookStatusInStock(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setBookFormat(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setDescription(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setImageUrl(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setInsertDate(row[i] != null ? (Date) row[i] : null);
+            i++;
+            dto.setBookCode(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setInsertUser(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setQuantity(row[i] != null ? ((Number) row[i]).intValue() : 0);
             listBook.add(dto);
         }
 
@@ -143,5 +158,16 @@ public class InventoryRepoExtImpl implements InventoryRepoExt {
         Query query = em.createQuery("SELECT i FROM Inventory i WHERE i.bookId = :bookId", Inventory.class);
         query.setParameter("bookId", bookId);
         return (Inventory) query.getResultList().get(0);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Inventory> findAllByListBookId(List<Long> listBookId) throws Exception {
+        if (listBookId == null || listBookId.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Query query = em.createQuery("SELECT i FROM Inventory i WHERE i.bookId " + DbUtil.createInQuery("listBookId", listBookId), Inventory.class);
+        DbUtil.setParamInQuery(query, "listBookId", listBookId);
+        return query.getResultList();
     }
 }

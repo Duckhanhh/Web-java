@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
@@ -16,6 +15,7 @@
     <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet"/>
     <link href="/assets/css/style.css" rel="stylesheet"/>
     <link href="/assets/css/sub.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="#{request.contextPath}/webjars/primeicons/7.0.0/primeicons.css"/>
 </h:head>
 <style>
     body {
@@ -154,19 +154,22 @@
             </a>
         </li>
         <li class="nav-item" data-role="admin,staff">
-            <a class="nav-link collapsed" href="/inventoryManagement.jsf" data-section="inventory">
+            <a class="nav-link collapsed" href="${pageContext.request.contextPath}/inventoryManagement.jsf"
+               data-section="inventory">
                 <i class="bi bi-box"></i>
                 <span>Quản lý kho</span>
             </a>
         </li>
         <li class="nav-item" data-role="admin,staff">
-            <a class="nav-link collapsed" href="/bookManagement.jsf" data-section="books">
+            <a class="nav-link collapsed" href="${pageContext.request.contextPath}/bookManagement.jsf"
+               data-section="books">
                 <i class="bi bi-book"></i>
                 <span>Quản lý sách</span>
             </a>
         </li>
         <li class="nav-item" data-role="admin,staff">
-            <a class="nav-link collapsed" href="#orders" data-section="orders">
+            <a class="nav-link collapsed" href="${pageContext.request.contextPath}/orderManagement.jsf"
+               data-section="orders">
                 <i class="bi bi-cart"></i>
                 <span>Quản lý đơn hàng</span>
             </a>
@@ -226,7 +229,7 @@
             activeLink = document.querySelector('a[data-section="inventory"]');
         } else if (currentPath.includes('bookManagement')) {
             activeLink = document.querySelector('a[data-section="books"]');
-        } else if (currentPath.includes('orders')) {
+        } else if (currentPath.includes('orderManagement')) {
             activeLink = document.querySelector('a[data-section="orders"]');
         } else if (currentPath.includes('purchase-orders')) {
             activeLink = document.querySelector('a[data-section="purchase-orders"]');

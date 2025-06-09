@@ -13,5 +13,5 @@ public interface InventoryService {
                                   Long bookFormat, List<String> listCategory, List<String> listSupplierCode, int rating,
                                   Long fromPrice, Long toPrice, List<String> listAuthor) throws Exception;
 
-    void updateStatusBookInStock(BookDTO bookDTO) throws Exception;
+    void updateStatusBookInStock(BookDTO bookDTO, String updateStaff) throws Exception;
 }

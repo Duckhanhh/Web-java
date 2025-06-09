@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Data;
 import org.bpm.abcbook.Const;
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static org.hibernate.internal.CoreLogging.logger;
 
-@Controller
 @Named
 @Data
 @ViewScoped
@@ -49,6 +49,7 @@ public class InventoryController {
     private Long toPrice; //gia den
     private Map<String, String> supplierLabels; // nhãn cho nhà cung cấp
     private BookDTO selectedBook; // sách được chọn
+    private String currentStaff; // mã nhân viên hiện tại
 
     @Autowired
     private InventoryService inventoryService;
@@ -58,6 +59,8 @@ public class InventoryController {
     private SuppliersService suppliersService;
     @Autowired
     private StaffService staffService;
+    @Inject
+    private UserSessionBean userSessionBean;
 
     @PostConstruct
     public void init() {
@@ -71,6 +74,8 @@ public class InventoryController {
             listStaff = staffService.getAllStaffs();
 
             supplierLabels = suppliersList.stream().collect(Collectors.toMap(Suppliers::getSupplierCode, Suppliers::getSupplierName));
+
+            currentStaff = userSessionBean == null || userSessionBean.getCurrentStaff() == null ? null : userSessionBean.getCurrentStaff().getStaffCode();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage()));
         }
@@ -123,7 +128,7 @@ public class InventoryController {
                 return;
             }
             selectedBook.setBookStatusInStock(1L);
-            inventoryService.updateStatusBookInStock(selectedBook);
+            inventoryService.updateStatusBookInStock(selectedBook, currentStaff);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cập nhật trạng thái sách thành công"));
             searchInventory();
         } catch (Exception e) {
@@ -139,7 +144,7 @@ public class InventoryController {
                 return;
             }
             selectedBook.setBookStatusInStock(0L);
-            inventoryService.updateStatusBookInStock(selectedBook);
+            inventoryService.updateStatusBookInStock(selectedBook, currentStaff);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Xóa sách thành công"));
             searchInventory();
         } catch (Exception e) {

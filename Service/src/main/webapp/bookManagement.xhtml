@@ -92,18 +92,18 @@
                             <h:outputText value="#{book.title}"/>
                         </p:column>
                         <p:column headerText="Thể loại"
-                                  sortBy="#{booksController.categoryLabels[book.category]}"
-                                  filterBy="#{booksController.categoryLabels[book.category]}"
+                                  sortBy="#{book.category}"
+                                  filterBy="#{book.category}"
                                   filterMatchMode="contains" style="width: 100px;">
-                            <h:outputText value="#{booksController.categoryLabels[book.category]}"/>
+                            <h:outputText value="#{book.category}"/>
                         </p:column>
                         <p:column headerText="Tác giả" sortBy="#{book.author}" filterBy="#{book.author}"
                                   filterMatchMode="contains" style="width: 100px;">
                             <h:outputText value="#{book.author}"/>
                         </p:column>
-                        <p:column headerText="Nhà xuất bản" sortBy="#{book.publisher}" filterBy="#{book.publisher}"
+                        <p:column headerText="Nhà xuất bản" sortBy="#{booksController.supplierLabels[book.publisher]}" filterBy="#{booksController.supplierLabels[book.publisher]}"
                                   filterMatchMode="contains" style="width: 100px;">
-                            <h:outputText value="#{book.publisher}"/>
+                            <h:outputText value="#{booksController.supplierLabels[book.publisher]}"/>
                         </p:column>
                         <p:column headerText="Giá bán" sortBy="#{book.price}" filterBy="#{book.price}"
                                   filterMatchMode="contains" style="width: 65px;">
@@ -180,9 +180,9 @@
                                             <p:outputLabel for="add-category">Thể loại</p:outputLabel>
                                             <p:selectOneMenu id="add-category"
                                                              value="#{booksController.newBook.category}">
-                                                <f:selectItems value="#{booksController.bookCategory}"
+                                                <f:selectItems value="#{booksController.listCategory}"
                                                                var="category"
-                                                               itemLabel="#{booksController.categoryLabels[category]}"
+                                                               itemLabel="#{category}"
                                                                itemValue="#{category}"/>
                                             </p:selectOneMenu>
                                         </div>
@@ -280,7 +280,7 @@
                                             <p:outputLabel for="supplier">Nhà xuất bản</p:outputLabel>
                                             <p:inputTextarea id="supplier"
                                                              readonly="true"
-                                                             value="#{booksController.selectedBook.publisher}"/>
+                                                             value="#{booksController.supplierLabels[booksController.selectedBook.publisher]}"/>
                                         </div>
                                     </div>
                                     <div style="flex: 0 0 250px; display: flex; justify-content: flex-end;">
@@ -322,9 +322,9 @@
                                             <p:outputLabel for="update-category">Thể loại</p:outputLabel>
                                             <p:selectOneMenu id="update-category"
                                                              value="#{booksController.updateBook.category}">
-                                                <f:selectItems value="#{booksController.bookCategory}"
+                                                <f:selectItems value="#{booksController.listCategory}"
                                                                var="category"
-                                                               itemLabel="#{booksController.categoryLabels[category]}"
+                                                               itemLabel="#{category}"
                                                                itemValue="#{category}"/>
                                             </p:selectOneMenu>
                                         </div>
@@ -347,7 +347,7 @@
                                                              value="#{booksController.updateBook.publisher}">
                                                 <f:selectItems value="#{booksController.suppliersList}"
                                                                var="supplier"
-                                                               itemLabel="#{supplier.supplierName}"
+                                                               itemLabel="#{booksController.supplierLabels[supplier.supplierCode]}"
                                                                itemValue="#{supplier.supplierCode}"/>
                                             </p:selectOneMenu>
                                         </div>

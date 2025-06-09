@@ -1,0 +1,477 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="template.xhtml">
+    <ui:define name="content">
+        <h:form id="formOrderMng">
+            <p:focus for="@form"/>
+            <p:outputPanel id="pnMsg">
+                <div class="Container">
+                    <p:messages id="msgOrderMng" autoUpdate="true" closable="true" showDetail="fasle"
+                                showSummary="true"/>
+                </div>
+            </p:outputPanel>
+
+            <!--Vung tim kiem-->
+            <p:outputPanel styleClass="Container" id="pnOrderMng">
+                <div class="card ui-fluid">
+                    <div class="ContainerIndent">
+                        <div class="Container30">
+                            <div class="Container20" style="margin-left: 1%;">
+                                <h:outputLabel for="orderId" value="Mã đơn hàng"/>
+                            </div>
+                            <div class="Container70">
+                                <p:inputText id="orderId" value="#{orderController.orderId}" styleClass="inputText"/>
+                            </div>
+                        </div>
+
+                        <div class="Container30" style="margin-left: 5%;">
+                            <div class="Container20">
+                                <h:outputLabel for="payMethod" value="Hình thức thanh toán"/>
+                            </div>
+                            <div class="Container70" style="margin-left: 2%;">
+                                <p:selectOneMenu id="payMethod" value="#{orderController.payMethod}"
+                                                 styleClass="inputText">
+                                    <f:selectItem itemLabel="Tất cả" itemValue=""/>
+                                    <f:selectItem itemLabel="Trả trước" itemValue="1"/>
+                                    <f:selectItem itemLabel="Trả sau" itemValue="2"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+
+                        <div class="Container30" style="margin-left: 5%;">
+                            <div class="Container20">
+                                <h:outputLabel for="payStatus" value="Trạng thái thanh toán"/>
+                            </div>
+                            <div class="Container70" style="margin-left: 2%;">
+                                <p:selectOneMenu id="payStatus" value="#{orderController.payStatus}"
+                                                 styleClass="inputText">
+                                    <f:selectItem itemLabel="Tất cả" itemValue=""/>
+                                    <f:selectItem itemLabel="Đã thanh toán" itemValue="1"/>
+                                    <f:selectItem itemLabel="Chưa thanh toán" itemValue="0"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ContainerIndent">
+                        <div class="Container30">
+                            <div class="Container20" style="margin-left: 1%;">
+                                <h:outputLabel for="createUser" value="Khách hàng"/>
+                            </div>
+                            <div class="Container70">
+                                <p:selectCheckboxMenu id="createUser"
+                                                      value="#{orderController.listUserSelected}"
+                                                      styleClass="Line"
+                                                      filter="true"
+                                                      updateLabel="true"
+                                                      emptyLabel="Tất cả"
+                                                      multiple="true"
+                                                      filterMatchMode="contains">
+                                    <f:selectItems value="#{orderController.listUser}"
+                                                   var="user"
+                                                   itemLabel="#{user.firstName}"
+                                                   itemValue="#{user.userId}"/>
+                                </p:selectCheckboxMenu>
+                            </div>
+                        </div>
+
+                        <div class="Container30" style="margin-left: 5%;">
+                            <div class="Container20">
+                                <h:outputLabel for="orderStatus" value="Trạng thái đơn hàng"/>
+                            </div>
+                            <div class="Container70" style="margin-left: 2%;">
+                                <p:selectCheckboxMenu id="orderStatus" value="#{orderController.orderSelectedStatus}"
+                                                      styleClass="inputText"
+                                                      emptyLabel="Tất cả"
+                                                      updateLabel="true"
+                                                      multiple="true">
+                                    <f:selectItem itemLabel="Đang xử lý" itemValue="1"/>
+                                    <f:selectItem itemLabel="Đã giao hàng" itemValue="3"/>
+                                    <f:selectItem itemLabel="Đã hủy" itemValue="4"/>
+                                </p:selectCheckboxMenu>
+                            </div>
+                        </div>
+
+                        <div class="Container30" style="margin-left: 5%;">
+                            <div class="Container20">
+                                <h:outputLabel for="shippingCarrier" value="Đơn vị vận chuyển"/>
+                            </div>
+                            <div class="Container70" style="margin-left: 2%;">
+                                <p:selectCheckboxMenu id="shippingCarrier"
+                                                      value="#{orderController.listSelectedShippingCarrier}"
+                                                      styleClass="inputText"
+                                                      emptyLabel="Tất cả"
+                                                      updateLabel="true"
+                                                      multiple="true">
+                                    <f:selectItems value="#{orderController.listShippingCarrier}"
+                                                   var="shippingCarrier"
+                                                   itemLabel="#{shippingCarrier}"
+                                                   itemValue="#{shippingCarrier}"/>
+                                </p:selectCheckboxMenu>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ContainerIndent">
+                        <div class="Container30">
+                            <div class="Container20">
+                                <h:outputLabel value="Nhân viên tiếp nhận"/>
+                            </div>
+                            <div class="Container70" style="margin-left: 1%">
+                                <p:selectCheckboxMenu id="staffConfirm"
+                                                      value="#{orderController.listSelectedStaff}"
+                                                      styleClass="inputText"
+                                                      filter="true"
+                                                      updateLabel="true"
+                                                      emptyLabel="Tất cả"
+                                                      multiple="true"
+                                                      filterMatchMode="contains">
+                                    <f:selectItems value="#{orderController.listStaff}"
+                                                   var="staff"
+                                                   itemLabel="#{staff.firstName}"
+                                                   itemValue="#{staff.staffCode}"/>
+                                </p:selectCheckboxMenu>
+                            </div>
+                        </div>
+
+                        <div class="Container30" style="margin-left: 5%;">
+                            <div class="Container20">
+                                <p:outputLabel value="Ngày tạo" for="createDate"/>
+                            </div>
+                            <div class="Container70" style="margin-left: 2%;">
+                                <p:datePicker id="createDate" selectionMode="range"
+                                              value="#{orderController.listSelectedDate}"
+                                              readonlyInput="true"
+                                              pattern="dd/MM/yyyy"/>
+                            </div>
+                        </div>
+
+                        <div class="Container30" style="margin-left: 5%;">
+                            <div class="Container20">
+                                <p:outputLabel value="Trạng thái công việc"
+                                               for="state"/>
+                            </div>
+                            <div class="Container70" style="margin-left: 2%">
+                                <p:selectCheckboxMenu id="state"
+                                                      value="#{orderController.listSelectedState}"
+                                                      styleClass="inputText"
+                                                      updateLabel="true"
+                                                      emptyLabel="Tất cả"
+                                                      multiple="true">
+                                    <f:selectItem itemLabel="Chờ tiếp nhận" itemValue="1"/>
+                                    <f:selectItem itemLabel="Chờ giao hàng" itemValue="2"/>
+                                    <f:selectItem itemLabel="Đang giao hàng" itemValue="3"/>
+                                    <f:selectItem itemLabel="Đã giao hàng" itemValue="4"/>
+                                </p:selectCheckboxMenu>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Container100 pd-top-7"
+                         style="justify-content: center; align-items: center; text-align: center; margin-top: 1%; display: flex; margin-bottom: 1%;">
+                        <p:commandButton value="Tìm kiếm"
+                                         action="#{orderController.searchOrders}"
+                                         style="width: auto; min-width: unset; margin-left: 1%;"
+                                         process="@form"
+                                         update=":formOrderMng:msgOrderMng,:formOrderMng:pnResult"/>
+                        <p:commandButton value="Đặt lại"
+                                         action="#{orderController.clearDataSearch}"
+                                         update="@([id$=pnOrderMng]), @([id$=msgOrderMng])"
+                                         style="width: auto; min-width: unset; margin-left: 1%;"/>
+                    </div>
+                </div>
+            </p:outputPanel>
+
+            <!--Vung ket qua tim kiem-->
+            <p:outputPanel styleClass="Container"
+                           style="margin-top: 1%; margin-bottom: 1%;"
+                           id="pnResult">
+                <div class="Container searchResult">
+                    <div class="Container100 pd-top-7">
+                        <p:dataTable id="dtOrder"
+                                     value="#{orderController.listOrders}"
+                                     var="order"
+                                     resizableColumns="true"
+                                     scrollable="true"
+                                     scrollWidth="100%"
+                                     tableStyle="min-width: 1200px; table-layout: fixed;"
+                                     paginator="true"
+                                     paginatorAlwaysVisible="true"
+                                     rowsPerPageTemplate="5,10,15"
+                                     rows="10"
+                                     rowIndexVar="index"
+                                     paginatorPosition="bottom"
+                                     emptyMessage="Không có dữ liệu"
+                                     rowKey="#{order.orderId}"
+                                     expandedRow="#{orderController.isRowExpanded(order)}">
+
+                            <p:ajax event="rowToggle" listener="#{orderController.prepareView}"
+                                    update=":formOrderMng:dtOrder"/>
+
+                            <p:column style="width:20px;">
+                                <p:rowToggler/>
+                            </p:column>
+                            <p:column headerText="STT" style="width: 20px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis" value="#{index + 1}"/>
+                            </p:column>
+                            <p:column headerText="Mã đơn hàng" style="width: 100px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{order.orderId}"/>
+                            </p:column>
+                            <p:column headerText="Nhân viên" style="width: 100px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{order.staffFirstName}"/>
+                            </p:column>
+                            <p:column headerText="Trạng thái đơn hàng" style="width: 120px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{orderController.getOrderStatusName(order.status)}"/>
+                            </p:column>
+                            <p:column headerText="Trạng thái công việc" style="width: 120px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{orderController.getOrderStateName(order.state)}"/>
+                            </p:column>
+                            <p:column headerText="Hình thức thanh toán" style="width: 120px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{orderController.getPayMethodName(order.paymentMethod)}"/>
+                            </p:column>
+                            <p:column headerText="Trạng thái thanh toán" style="width: 120px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{orderController.getPayStatusName(order.payStatus)}"/>
+                            </p:column>
+                            <p:column headerText="Ngày tạo" style="width: 100px; text-align: center;">
+                                <p:outputLabel styleClass="blackColor text-ellipsis"
+                                               value="#{order.orderDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column exportable="false" ariaHeaderText="Actions" style="width: 100px;">
+                                <p:commandButton icon="pi pi-cart-arrow-down"
+                                                 styleClass="rounded-button ui-button-success"
+                                                 oncomplete="PF('receiveDialog').show()"
+                                                 rendered="#{order.state eq 1 and order.status ne 4}"
+                                                 process="@this"
+                                                 title="Tiếp nhận"
+                                                 update=":formOrderMng:msgOrderMng,:formOrderMng:pnResult"
+                                                 actionListener="#{orderController.prepareEdit(order)}"/>
+                                <p:commandButton icon="pi pi-truck"
+                                                 title="Giao đơn"
+                                                 styleClass="rounded-button ui-button-success"
+                                                 oncomplete="PF('deliveryDialog').show()"
+                                                 rendered="#{order.state eq 2 and order.status ne 4}"
+                                                 process="@this"
+                                                 update=":formOrderMng:msgOrderMng,:formOrderMng:pnResult"
+                                                 actionListener="#{orderController.prepareEdit(order)}"/>
+                                <p:commandButton icon="pi pi-check"
+                                                 styleClass="rounded-button ui-button-success"
+                                                 oncomplete="PF('doneDialog').show()"
+                                                 rendered="#{order.state eq 3 and order.status ne 4 and order.payStatus eq 1}"
+                                                 process="@this"
+                                                 title="Hoàn thành"
+                                                 update=":formOrderMng:msgOrderMng,:formOrderMng:pnResult"
+                                                 actionListener="#{orderController.prepareEdit(order)}"/>
+
+                                <p:commandButton icon="pi pi-money-bill"
+                                                 styleClass="rounded-button ui-button-text-icon-primary"
+                                                 oncomplete="PF('payConfirmDialog').show()"
+                                                 rendered="#{order.payStatus eq 0 and order.status ne 4}"
+                                                 process="@this"
+                                                 title="Xác nhận thanh toán"
+                                                 style="margin-left: 8%;"
+                                                 update=":formOrderMng:msgOrderMng,:formOrderMng:pnResult"
+                                                 actionListener="#{orderController.prepareEdit(order)}"/>
+
+                                <p:commandButton icon="pi pi-trash"
+                                                 styleClass="rounded-button ui-button-danger"
+                                                 process="@this"
+                                                 title="Hủy đơn"
+                                                 oncomplete="PF('cancelOrderDialog').show()"
+                                                 rendered="#{order.status ne 4 and order.status ne 3}"
+                                                 update=":formOrderMng:msgOrderMng,:formOrderMng:pnResult"
+                                                 style="margin-left: 8%;"
+                                                 actionListener="#{orderController.prepareEdit(order)}"/>
+                            </p:column>
+
+                            <p:rowExpansion>
+                                <div class="Container100">
+                                    <p:outputPanel rendered="#{not empty orderController.selectedOrder}">
+                                        <div class="Container100">
+                                            <div class="Container30">
+                                                <div class="Container30">
+                                                    <p:outputLabel for="userName" value="Tên khách hàng"/>
+                                                </div>
+                                                <div class="Container60" style="margin-left: 2%;">
+                                                    <p:inputText id="userName"
+                                                                 readonly="true"
+                                                                 value="#{orderController.selectedOrder.userFirstName}"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="Container30">
+                                                <div class="Container30">
+                                                    <p:outputLabel for="totalFee" value="Tổng tiền"/>
+                                                </div>
+                                                <div class="Container60" style="margin-left: 2%;">
+                                                    <p:inputText id="totalFee"
+                                                                 readonly="true"
+                                                                 value="#{orderController.selectedOrder.totalAmount eq null ? 0 : orderController.selectedOrder.totalAmount}"/>
+                                                </div>
+                                            </div>
+
+                                            <div class="Container40">
+                                                <div class="Container33">
+                                                    <p:outputLabel for="orderFee" value="Tiền hàng"/>
+                                                </div>
+                                                <div class="Container60" style="margin-left: 1%;">
+                                                    <p:inputText id="orderFee"
+                                                                 readonly="true"
+                                                                 value="#{orderController.selectedOrder.productFee eq null ?
+                                                     0 : orderController.selectedOrder.productFee}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="Container100" style="margin-top: 1%;">
+                                            <div class="Container30">
+                                                <div class="Container30">
+                                                    <p:outputLabel for="shippingFee" value="Tiền giao vận"/>
+                                                </div>
+                                                <div class="Container60" style="margin-left: 2%;">
+                                                    <p:inputText id="shippingFee"
+                                                                 readonly="true"
+                                                                 value="#{orderController.selectedOrder.shippingFee eq null ?
+                                                    0 : orderController.selectedOrder.shippingFee}"/>
+                                                </div>
+                                            </div>
+                                            <div class="Container30">
+                                                <div class="Container30">
+                                                    <p:outputLabel for="discountAmount" value="Khuyến mại"/>
+                                                </div>
+                                                <div class="Container60" style="margin-left: 2%;">
+                                                    <p:inputText id="discountAmount"
+                                                                 readonly="true"
+                                                                 value="#{orderController.selectedOrder.discountAmount eq null ?
+                                                    0 : orderController.selectedOrder.discountAmount}"/>
+                                                </div>
+                                            </div>
+                                            <div class="Container40">
+                                                <div class="Container33">
+                                                    <p:outputLabel for="ship-carrier" value="Đơn vị vận chuyển"/>
+                                                </div>
+                                                <div class="Container60" style="margin-left: 1%;">
+                                                    <p:inputText id="ship-carrier"
+                                                                 readonly="true"
+                                                                 value="#{orderController.selectedOrder.shippingCarrier}"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="Container100" style="margin-top: 1%;">
+                                            <div class="Container10">
+                                                <p:outputLabel for="address" value="Địa chỉ giao hàng"/>
+                                            </div>
+                                            <div class="Container60" style="margin-left: 5%;">
+                                                <p:inputText id="address"
+                                                             readonly="true"
+                                                             style="width: 100%;"
+                                                             value="#{orderController.selectedOrder.shippingAddress}"/>
+                                            </div>
+                                        </div>
+                                        <div class="Container100 pd-top-7" style="margin-top: 1%;">
+                                            <p:dataTable id="dtOrderDetail"
+                                                         value="#{orderController.selectedOrder.listOrderItem}"
+                                                         var="orderItem"
+                                                         resizableColumns="true"
+                                                         rowIndexVar="index"
+                                                         emptyMessage="Không có dữ liệu">
+                                                <p:column headerText="STT" style="width: 60px; text-align: center;">
+                                                    <p:outputLabel styleClass="blackColor text-ellipsis"
+                                                                   value="#{index + 1}"/>
+                                                </p:column>
+                                                <p:column headerText="Tên sách"
+                                                          style="width: 200px; text-align: center;">
+                                                    <p:outputLabel styleClass="blackColor text-ellipsis"
+                                                                   value="#{orderItem.bookName}"/>
+                                                </p:column>
+                                                <p:column headerText="Số lượng"
+                                                          style="width: 100px; text-align: center;">
+                                                    <p:outputLabel styleClass="blackColor text-ellipsis"
+                                                                   value="#{orderItem.quantity}"/>
+                                                </p:column>
+                                                <p:column headerText="Đơn giá"
+                                                          style="width: 150px; text-align: center;">
+                                                    <p:outputLabel styleClass="blackColor text-ellipsis"
+                                                                   value="#{orderItem.unitPrice}"/>
+                                                </p:column>
+                                                <p:column headerText="Thành tiền"
+                                                          style="width: 150px; text-align: center;">
+                                                    <p:outputLabel styleClass="blackColor text-ellipsis"
+                                                                   value="#{orderItem.quantity * orderItem.unitPrice}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </div>
+                                    </p:outputPanel>
+                                </div>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </p:outputPanel>
+        </h:form>
+
+        <h:form id="dialogs">
+            <p:confirmDialog header="Xác nhận" message="Tiếp nhận đơn #{orderController.selectedOrder.orderId}?"
+                             showEffect="fade" width="300"
+                             widgetVar="receiveDialog">
+                <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                 actionListener="#{orderController.updateStateOrder(2)}"
+                                 process="@this" update="@([id$=dtOrder]), @([id$=msgOrderMng])"
+                                 oncomplete="PF('receiveDialog').hide()"/>
+                <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('receiveDialog').hide()"/>
+            </p:confirmDialog>
+
+            <p:confirmDialog header="Xác nhận" message="Giao vận đơn #{orderController.selectedOrder.orderId}?"
+                             showEffect="fade" width="300"
+                             widgetVar="deliveryDialog">
+                <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                 actionListener="#{orderController.updateStateOrder(3)}"
+                                 process="@this" update="@([id$=dtOrder]), @([id$=msgOrderMng])"
+                                 oncomplete="PF('deliveryDialog').hide()"/>
+                <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deliveryDialog').hide()"/>
+            </p:confirmDialog>
+
+            <p:confirmDialog header="Xác nhận" message="Hoàn thành đơn #{orderController.selectedOrder.orderId}?"
+                             showEffect="fade" width="300"
+                             widgetVar="doneDialog">
+                <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                 actionListener="#{orderController.updateStateOrder(4)}"
+                                 process="@this" update="@([id$=dtOrder]), @([id$=msgOrderMng])"
+                                 oncomplete="PF('doneDialog').hide()"/>
+                <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('doneDialog').hide()"/>
+            </p:confirmDialog>
+
+            <p:confirmDialog widgetVar="cancelOrderDialog" showEffect="fade" width="300"
+                             message="Hủy đơn hàng?" header="Xác nhận" severity="warn">
+                <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                 actionListener="#{orderController.cancelOrder()}"
+                                 process="@this" update="@([id$=dtOrder]), @([id$=msgOrderMng])"
+                                 oncomplete="PF('cancelOrderDialog').hide()"/>
+                <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('cancelOrderDialog').hide()"/>
+            </p:confirmDialog>
+
+            <p:confirmDialog widgetVar="payConfirmDialog" showEffect="fade" width="300"
+                             message="Xác nhận thanh toán?" header="Xác nhận" severity="warn">
+                <p:commandButton value="Đồng ý" icon="pi pi-check"
+                                 actionListener="#{orderController.payConfirm()}"
+                                 process="@this" update="@([id$=dtOrder]), @([id$=msgOrderMng])"
+                                 oncomplete="PF('payConfirmDialog').hide()"/>
+                <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('payConfirmDialog').hide()"/>
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

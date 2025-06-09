@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StaffResponse {
-    private Long userId;
+    private Long staffId;
     private String email;
     private String phoneNumber;
     private String firstName;

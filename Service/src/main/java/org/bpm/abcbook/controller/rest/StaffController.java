@@ -1,4 +1,4 @@
-package org.bpm.abcbook.controller;
+package org.bpm.abcbook.controller.rest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

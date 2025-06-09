@@ -23,8 +23,8 @@ import org.springframework.stereotype.Controller;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
-@Controller
 @Named
 @ViewScoped
 @Data
@@ -35,7 +35,6 @@ public class BooksController implements Serializable {
     private Books selectedBook;
     private Books updateBook;
     private List<Books> selectedBooks;
-    private List<String> bookCategory;
     private Long statusFilterValue; // Giá trị bộ lọc trạng thái
     private Long oldStatusFilterValue; // Giá trị bộ lọc trạng thái cũ
     private Books newBook; // Sách mới được thêm vào
@@ -47,10 +46,9 @@ public class BooksController implements Serializable {
     private String imageUrlUpdate;
     private Long priceUpdate;
     private String currentStaff;
-
-    // Map để ánh xạ category và nhãn hiển thị
-    private Map<String, String> categoryLabels;
+    private Map<String, String> supplierLabels; // nhãn cho nhà cung cấp
     private Map<Long, String> statusFilterOptions;
+    private List<String> listCategory; // Danh sách thể loại sách
 
     // Danh sách nhà cung cấp
     private List<Suppliers> suppliersList;
@@ -68,21 +66,17 @@ public class BooksController implements Serializable {
     public void init() {
         try {
             suppliersList = suppliersService.findAllSuppliers();
+            listCategory = booksService.getAllCategory();
             getAllBooks();
             statusFilterValue = null;
             newBook = new Books();
-            categoryLabels = new HashMap<>();
             statusFilterOptions = new LinkedHashMap<>();
 
-            categoryLabels.put("TIEU_THUYET", "Tiểu thuyết");
-            categoryLabels.put("TRUYEN_NGAN", "Truyện ngắn");
-            categoryLabels.put("TRUYEN_TRANH", "Truyện tranh");
-            categoryLabels.put("TRUYEN_THIEU_NHI", "Truyện thiếu nhi");
+            supplierLabels = suppliersList.stream().collect(Collectors.toMap(Suppliers::getSupplierCode, Suppliers::getSupplierName));
 
             statusFilterOptions.put(1L, "Hiệu lực");
             statusFilterOptions.put(0L, "Không hiệu lực");
 
-            bookCategory = Const.BookCategory.BOOK_CATEGORY;
             currentStaff = userSessionBean == null || userSessionBean.getCurrentStaff() == null ? null : userSessionBean.getCurrentStaff().getStaffCode();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

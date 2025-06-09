@@ -15,7 +15,7 @@ public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // nhan biet tu dong tao boi mysql
     @Column(name = "staff_id")
-    private Long userId;
+    private Long staffId;
     @Column(name = "staff_code")
     private String staffCode;
     @Column(name = "email")

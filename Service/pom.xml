@@ -150,6 +150,12 @@
 			<version>14.0.0</version>
 			<classifier>jakarta</classifier>
 		</dependency>
+
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>primeicons</artifactId>
+			<version>7.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

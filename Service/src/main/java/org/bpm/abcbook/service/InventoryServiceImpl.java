@@ -1,10 +1,10 @@
 package org.bpm.abcbook.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bpm.abcbook.dto.BookDTO;
 import org.bpm.abcbook.exception.AppException;
 import org.bpm.abcbook.mapper.BooksMapper;
-import org.bpm.abcbook.model.Books;
 import org.bpm.abcbook.model.Inventory;
 import org.bpm.abcbook.repository.InventoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +39,16 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateStatusBookInStock(BookDTO bookDTO) throws Exception {
+    public void updateStatusBookInStock(BookDTO bookDTO, String updateStaff) throws Exception {
         if (bookDTO == null || bookDTO.getId() == null) {
             throw new AppException("USBIS00001", "Thông tin sách không hợp lệ");
         }
         Long bookId = bookDTO.getId();
         Inventory inventory = inventoryRepo.findByBookId(bookId);
         inventory.setStatus(bookDTO.getBookStatusInStock());
+
+        inventory.setUpdateUser(updateStaff);
+        inventory.setUpdateDate(new Date());
 
         inventoryRepo.save(inventory);
     }

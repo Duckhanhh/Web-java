@@ -1,6 +1,8 @@
 package org.bpm.abcbook.exception;
 
 import org.bpm.abcbook.dto.response.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -14,6 +16,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @Autowired
     public MessageSource messageSource;
 
@@ -34,6 +38,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .timestamp(LocalDateTime.now())
                 .build();
+        logger.error("Error Code: {}, Message: {}", errorCode, errorMessage);
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
