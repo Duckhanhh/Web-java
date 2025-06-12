@@ -4,12 +4,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.bpm.abcbook.dto.OrderDTO;
+import org.bpm.abcbook.dto.RevenueDTO;
 import org.bpm.abcbook.util.DbUtil;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Repository
@@ -73,7 +75,7 @@ public class OrdersRepoExtImpl implements OrdersRepoExt {
             query.setParameter("payStatus", payStatus);
         }
         if (listUserId != null && !listUserId.isEmpty()) {
-            DbUtil.setParamInQuery(query,"listUserId", listUserId);
+            DbUtil.setParamInQuery(query, "listUserId", listUserId);
         }
         if (listStatus != null && !listStatus.isEmpty()) {
             DbUtil.setParamInQuery(query, "listStatus", listStatus);
@@ -82,7 +84,7 @@ public class OrdersRepoExtImpl implements OrdersRepoExt {
             DbUtil.setParamInQuery(query, "listShippingCarrier", listShippingCarrier);
         }
         if (listStaff != null && !listStaff.isEmpty()) {
-            DbUtil.setParamInQuery(query,"listStaff", listStaff);
+            DbUtil.setParamInQuery(query, "listStaff", listStaff);
         }
         if (listState != null && !listState.isEmpty()) {
             DbUtil.setParamInQuery(query, "listState", listState);
@@ -105,28 +107,65 @@ public class OrdersRepoExtImpl implements OrdersRepoExt {
             int i = 0;
             OrderDTO dto = new OrderDTO();
 
-            dto.setOrderId(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setStatus(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setState(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setTotalAmount(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setPaymentMethod(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setPayStatus(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setShippingCarrier(row[i] != null ? row[i].toString() : null); i++;
-            dto.setShippingAddress(row[i] != null ? row[i].toString() : null); i++;
-            dto.setUserId(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setUserFirstName(row[i] != null ? row[i].toString() : null); i++;
+            dto.setOrderId(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setStatus(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setState(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setTotalAmount(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setPaymentMethod(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setPayStatus(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setShippingCarrier(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setShippingAddress(row[i] != null ? row[i].toString() : null);
+            i++;
+            dto.setUserId(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setUserFirstName(row[i] != null ? row[i].toString() : null);
+            i++;
             if (row[i] != null) {
                 dto.getNecessaryData(row[i].toString());
             }
             i++;
-            dto.setDiscountAmount(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setOrderDate(row[i] != null ? (Date) row[i] : null); i++;
-            dto.setShippingFee(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
-            dto.setStaffConfirm(row[i] != null ? row[i].toString() : null); i++;
+            dto.setDiscountAmount(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setOrderDate(row[i] != null ? (Date) row[i] : null);
+            i++;
+            dto.setShippingFee(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            dto.setStaffConfirm(row[i] != null ? row[i].toString() : null);
+            i++;
             dto.setStaffFirstName(row[i] != null ? row[i].toString() : null);
 
             listOrder.add(dto);
         }
         return listOrder;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<RevenueDTO> getRevenue() throws Exception {
+        Query query = em.createNativeQuery("SELECT total_amount, order_date FROM Orders WHERE status = 3 ORDER BY order_date asc LIMIT 1000 ");
+        List<Object[]> result = query.getResultList();
+        if (result == null || result.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<RevenueDTO> listRevenue = new LinkedList<>();
+        for (Object[] row : result) {
+            int i = 0;
+            RevenueDTO revenueDTO = new RevenueDTO();
+
+            revenueDTO.setAmount(row[i] != null ? ((Number) row[i]).longValue() : null);
+            i++;
+            revenueDTO.setMonth(row[i] != null ? (Date) row[i] : null);
+
+            listRevenue.add(revenueDTO);
+        }
+        return listRevenue;
     }
 }

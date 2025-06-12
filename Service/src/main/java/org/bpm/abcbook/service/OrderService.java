@@ -1,6 +1,9 @@
 package org.bpm.abcbook.service;
 
+import org.bpm.abcbook.dto.BookDTO;
+import org.bpm.abcbook.dto.CategoryDTO;
 import org.bpm.abcbook.dto.OrderDTO;
+import org.bpm.abcbook.dto.RevenueDTO;
 import org.bpm.abcbook.model.Orders;
 
 import java.util.Date;
@@ -24,4 +27,10 @@ public interface OrderService {
     void cancelOrder(Long orderId) throws Exception;
 
     void payConfirm(Long orderId) throws Exception;
+
+    List<RevenueDTO> getRevenue() throws Exception;
+
+    List<CategoryDTO> getFavoriteCategory() throws Exception;
+
+    List<BookDTO> getBestSellingBooks() throws Exception;
 }

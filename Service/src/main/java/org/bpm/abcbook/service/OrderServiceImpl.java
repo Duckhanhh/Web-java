@@ -2,9 +2,7 @@ package org.bpm.abcbook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bpm.abcbook.Const;
-import org.bpm.abcbook.dto.BookDTO;
-import org.bpm.abcbook.dto.OrderDTO;
-import org.bpm.abcbook.dto.OrderItemDTO;
+import org.bpm.abcbook.dto.*;
 import org.bpm.abcbook.exception.AppException;
 import org.bpm.abcbook.mapper.OrderMapper;
 import org.bpm.abcbook.model.Books;
@@ -14,6 +12,7 @@ import org.bpm.abcbook.repository.BooksRepo;
 import org.bpm.abcbook.repository.InventoryRepo;
 import org.bpm.abcbook.repository.OrdersRepo;
 import org.bpm.abcbook.repository.UserRepo;
+import org.bpm.abcbook.util.DataUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +69,8 @@ public class OrderServiceImpl implements OrderService {
             }
 
             BookDTO bookInStock = inventoryRepo.findAllInStock(null, null, null, Const.BookStatus.BOOK_STATUS_AVAILABLE,
-                    Collections.singletonList(item.getBookId()), null, null, null,
-                    null, null, null, null).stream()
+                            Collections.singletonList(item.getBookId()), null, null, null,
+                            null, null, null, null).stream()
                     .findFirst().orElseThrow(() -> new AppException("PO00005", "Không có trong kho mã sách: " + item.getBookId()));
 
 
@@ -136,10 +135,6 @@ public class OrderServiceImpl implements OrderService {
                 });
             }
         });
-
-        //Lay thong tin nhan vien (neu co)
-        List<String> lstStaff = listOrder.stream().map(OrderDTO::getStaffConfirm).filter(Objects::nonNull).toList();
-
         return listOrder;
     }
 
@@ -288,6 +283,117 @@ public class OrderServiceImpl implements OrderService {
 
         orders.setPayStatus(Const.PayStatus.PAID);
         this.updateOrder(orders);
+    }
+
+    @Override
+    public List<RevenueDTO> getRevenue() throws Exception {
+        return ordersRepo.getRevenue();
+    }
+
+    @Override
+    public List<CategoryDTO> getFavoriteCategory() throws Exception {
+        List<OrderDTO> listCompleteOrder = ordersRepo.findOrder(null, null, null, null,
+                Collections.singletonList(Const.OrderStatus.ORDER_STATUS_COMPLETED),
+                null, null, null, null, null);
+
+        if (DataUtil.isNullOrEmpty(listCompleteOrder)) {
+            throw new AppException("GFC00001", "Không có dữ liệu đơn hàng");
+        }
+
+        //Lay ra danh sach bookId
+        List<Long> listBookId = listCompleteOrder.stream()
+                .flatMap(order -> order.getListOrderItem().stream())
+                .map(OrderItemDTO::getBookId)
+                .distinct()
+                .toList();
+
+        //Lay ra thong tin sach
+        List<Books> books = booksRepo.findAllById(listBookId);
+
+        // Tạo map bookId:bookName
+        Map<Long, String> bookIdToCategory = books.stream()
+                .collect(Collectors.toMap(Books::getId, Books::getCategory));
+
+        if (DataUtil.isNullOrEmpty(listCompleteOrder)) {
+            throw new AppException("GFC00001", "Không có dữ liệu");
+        }
+
+        Map<String, CategoryDTO> categoryMap = new HashMap<>();
+        for (OrderDTO order : listCompleteOrder) {
+            if (order == null || DataUtil.isNullOrEmpty(order.getListOrderItem())) {
+                continue;
+            }
+
+            List<OrderItemDTO> listItem = order.getListOrderItem();
+            for (OrderItemDTO item : listItem) {
+                if (item == null || item.getQuantity() == null || item.getBookId() == null) {
+                    continue;
+                }
+
+                String categoryName = bookIdToCategory.get(item.getBookId());
+                Long quantity = item.getQuantity();
+
+                categoryMap.compute(categoryName, (key, existingCategory) -> {
+                    if (existingCategory == null) {
+                        return new CategoryDTO(categoryName, quantity);
+                    } else {
+                        Long number = existingCategory.getNumberOfBook() + quantity;
+                        existingCategory.setNumberOfBook(number);
+                        return existingCategory;
+                    }
+                });
+            }
+        }
+
+        return new ArrayList<>(categoryMap.values());
+    }
+
+    @Override
+    public List<BookDTO> getBestSellingBooks() throws Exception {
+        List<OrderDTO> listCompleteOrder = ordersRepo.findOrder(null, null, null, null,
+                Collections.singletonList(Const.OrderStatus.ORDER_STATUS_COMPLETED),
+                null, null, null, null, null);
+
+        if (DataUtil.isNullOrEmpty(listCompleteOrder)) {
+            throw new AppException("GFC00001", "Không có dữ liệu đơn hàng");
+        }
+
+        //Lay ra danh sach bookId
+        List<Long> listBookId = listCompleteOrder.stream()
+                .flatMap(order -> order.getListOrderItem().stream())
+                .map(OrderItemDTO::getBookId)
+                .distinct()
+                .toList();
+
+        Map<Long, Long> mapBookIdToQuantity = listCompleteOrder.stream()
+                .flatMap(order -> order.getListOrderItem().stream())
+                .filter(item -> item != null && item.getBookId() != null && item.getQuantity() != null)
+                .collect(Collectors.groupingBy(OrderItemDTO::getBookId, Collectors.summingLong(OrderItemDTO::getQuantity)));
+
+        //Lay ra thong tin sach
+        List<Books> books = booksRepo.findAllById(listBookId);
+
+        if (DataUtil.isNullOrEmpty(books)) {
+            throw new AppException("GFC00002", "Không có dữ liệu sách");
+        }
+
+        //Sap xep giam dan
+        Map<Long, BookDTO> bookIdToBook = books.stream()
+                .sorted((b1, b2) -> Long.compare(
+                        mapBookIdToQuantity.getOrDefault(b2.getId(), 0L),
+                        mapBookIdToQuantity.getOrDefault(b1.getId(), 0L))
+                )
+                .limit(5)
+                .collect(Collectors.toMap(Books::getId, b -> BookDTO.builder()
+                                .title(b.getTitle())
+                                .author(b.getAuthor())
+                                .quantity(Math.toIntExact(mapBookIdToQuantity.get(b.getId())))
+                                .build(),
+                        (a, b) -> a,
+                        LinkedHashMap::new)
+                );
+
+        return new LinkedList<>(bookIdToBook.values());
     }
 
 

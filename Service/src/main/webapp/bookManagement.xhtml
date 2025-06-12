@@ -359,7 +359,7 @@
 
                             <p:commandButton value="Cập nhật" icon="pi pi-check"
                                              actionListener="#{booksController.updateBook}"
-                                             update="update-book-content :form:dt-books :form:messages :dialogs:update-messages"
+                                             update="update-book-content :form:dt-books :form:messages"
                                              process="update-book-content @this"
                                              oncomplete="if (!args.validationFailed) { PF('updateBookDialog').hide(); }"/>
 

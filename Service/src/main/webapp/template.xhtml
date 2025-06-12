@@ -148,7 +148,7 @@
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-            <a class="nav-link" href="#dashboard" data-section="dashboard">
+            <a class="nav-link" href="${pageContext.request.contextPath}/dashboard.jsf" data-section="dashboard">
                 <i class="bi bi-grid"></i>
                 <span>Dashboard</span>
             </a>
@@ -178,12 +178,6 @@
             <a class="nav-link collapsed" href="#purchase-orders" data-section="purchase-orders">
                 <i class="bi bi-truck"></i>
                 <span>Quản lý nhập hàng</span>
-            </a>
-        </li>
-        <li class="nav-item" data-role="admin">
-            <a class="nav-link collapsed" href="#staff" data-section="staff">
-                <i class="bi bi-person"></i>
-                <span>Quản lý nhân viên</span>
             </a>
         </li>
     </ul>
@@ -332,8 +326,27 @@
 <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
 <script src="assets/vendor/tinymce/tinymce.min.js"></script>
 <script src="assets/vendor/php-email-form/validate.js"></script>
-
 <!-- Template Main JS File -->
 <script src="assets/js/main.js"></script>
+<script src="assets/js/html2canvas.min.js"></script>
+<script src="assets/js/jspdf.umd.min.js"></script>
+<script>
+    // Define exportChartToPDF function globally
+    window.exportChartToPDF = async function () {
+        const {jsPDF} = window.jspdf;
+        // Update selector to find PrimeFaces chart canvas
+        const chartElement = document.querySelector('#chart\\:lineChart canvas');
+
+        if (!chartElement) {
+            alert("Không tìm thấy biểu đồ.");
+            return;
+        }
+        const imgData = chartElement.toDataURL("image/png");
+
+        const pdf = new jsPDF();
+        pdf.addImage(imgData, 'PNG', 10, 10, 180, 100);
+        pdf.save("linechart.pdf");
+    };
+</script>
 </body>
 </html>

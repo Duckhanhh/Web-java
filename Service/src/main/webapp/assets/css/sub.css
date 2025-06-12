@@ -466,12 +466,12 @@ img{ border:none; border:0px;}
     clear: both;
 }
 
-.content {
-    margin-top: 10px;
-    margin-left: 290px;
-    width: calc(100%);
+.main-content, .content {
+    margin-top: 60px;         /* Chiều cao header */
+    margin-left: 300px;       /* Chiều rộng sidebar */
+    width: calc(100% - 300px);
+    min-height: calc(100vh - 60px);
     box-sizing: border-box;
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: auto;
+    overflow: auto;
+    background: #fff;         /* Tuỳ chọn: cho dễ nhìn */
 }
