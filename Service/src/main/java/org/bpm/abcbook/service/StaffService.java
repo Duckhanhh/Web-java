@@ -51,6 +51,7 @@ public class StaffService {
 
         Staff staff = staffMapper.staffRequestToStaff(staffData);
         staff.setRegistrationDate(new Date());
+        staff.setRole("ADMIN");
         staffRepo.save(staff);
     }
 }

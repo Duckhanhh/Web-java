@@ -30,7 +30,7 @@ import java.util.StringJoiner;
 public class AuthenticationServiceImpl implements AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
-    @Value("${jwt.signerKey}")
+    @Value("${jwt.signer.key}")
     private String signerKey;
 
     @Autowired
@@ -44,17 +44,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (authenticationRequest == null
                 || authenticationRequest.getPassword() == null
                 || authenticationRequest.getEmail() == null) {
-            throw new AppException("L00001", "common.login.data.empty");
+            throw new AppException("L00001", "Thiếu thông tin đăng nhập");
         }
         var staff = staffRepo.getByEmail(authenticationRequest.getEmail());
 
         if (staff == null) {
-            throw new AppException("L00002", "common.login.user.not.exist");
+            throw new AppException("L00002", "Sai thông tin đăng nhập");
         }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         if (!passwordEncoder.matches(authenticationRequest.getPassword(), staff.getPassword())) {
-            throw new AppException("L00003", "common.login.email.or.password.invalid");
+            throw new AppException("L00003", "Sai email hoặc mật khẩu");
         }
 
         var staffResponse = staffMapper.toStaffResponse(staff);
@@ -73,7 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .issuer("abcbook")
                 .claim("scope", builderScope(users))
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(new Date(Instant.now().plus(30, ChronoUnit.MINUTES).toEpochMilli()))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());

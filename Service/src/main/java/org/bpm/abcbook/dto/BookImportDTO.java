@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RevenueDTO {
-    private Long amount;
-    private String month;
+public class BookImportDTO {
+    private Long bookId;
+    private Long quantity;
 }

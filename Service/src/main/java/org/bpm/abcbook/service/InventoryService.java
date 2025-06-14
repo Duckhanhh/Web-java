@@ -1,6 +1,7 @@
 package org.bpm.abcbook.service;
 
 import org.bpm.abcbook.dto.BookDTO;
+import org.bpm.abcbook.dto.BookImportDTO;
 import org.bpm.abcbook.model.Inventory;
 
 import java.util.Date;
@@ -14,4 +15,6 @@ public interface InventoryService {
                                   Long fromPrice, Long toPrice, List<String> listAuthor) throws Exception;
 
     void updateStatusBookInStock(BookDTO bookDTO, String updateStaff) throws Exception;
+
+    void importBook(List<BookImportDTO> importDTOList, String staffCode) throws Exception;
 }

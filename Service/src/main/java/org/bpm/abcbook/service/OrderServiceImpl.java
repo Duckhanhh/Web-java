@@ -105,6 +105,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> findOrder(Long orderId, Long payMethod, Long payStatus, List<Long> listUserId, List<Long> listStatus,
                                     List<String> listShippingCarrier, List<String> listStaff, List<Long> listState, Date fromDate, Date toDate) throws Exception {
         List<OrderDTO> listOrder = ordersRepo.findOrder(orderId, payMethod, payStatus, listUserId, listStatus, listShippingCarrier, listStaff, listState,
@@ -286,11 +287,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RevenueDTO> getRevenue() throws Exception {
         return ordersRepo.getRevenue();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDTO> getFavoriteCategory() throws Exception {
         List<OrderDTO> listCompleteOrder = ordersRepo.findOrder(null, null, null, null,
                 Collections.singletonList(Const.OrderStatus.ORDER_STATUS_COMPLETED),
@@ -349,6 +352,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookDTO> getBestSellingBooks() throws Exception {
         List<OrderDTO> listCompleteOrder = ordersRepo.findOrder(null, null, null, null,
                 Collections.singletonList(Const.OrderStatus.ORDER_STATUS_COMPLETED),
@@ -394,6 +398,12 @@ public class OrderServiceImpl implements OrderService {
                 );
 
         return new LinkedList<>(bookIdToBook.values());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NumberOrderDTO> getNumberOrder() throws Exception {
+        return ordersRepo.getNumberOrder();
     }
 
 

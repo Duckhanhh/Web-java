@@ -38,7 +38,8 @@
         <ui:define name="content">
             <div class="card crud-demo">
                 <h:form id="form">
-                    <p:messages id="messages" showDetail="false" autoUpdate="true" closable="true"/>
+                    <p:growl id="growl" showDetail="true" sticky="true"/>
+
                     <p:toolbar>
                         <p:toolbarGroup>
                             <p:commandButton value="Thêm mới" icon="pi pi-plus" actionListener="#{booksController.prepareAddBook}"
@@ -51,7 +52,7 @@
                                              icon="pi pi-trash" actionListener="#{booksController.deleteSelectedBooks}"
                                              styleClass="ui-button-danger"
                                              process="@this"
-                                             disabled="#{!booksController.hasSelectedBooks()}" update="@this">
+                                             disabled="#{!booksController.hasSelectedBooks()}" update="@this, :form:growl">
                                 <p:confirm header="Xác nhận" message="Xoá các cuốn sách đã chọn?"
                                            icon="pi pi-exclamation-triangle"/>
                             </p:commandButton>
@@ -222,7 +223,7 @@
                         <f:facet name="footer">
                             <p:commandButton value="Thêm mới" icon="pi pi-check"
                                              actionListener="#{booksController.insertBook(booksController.newBook)}"
-                                             update="add-book-content :form:dt-books :form:messages"
+                                             update="add-book-content :form:dt-books :form:growl"
                                              process="add-book-content @this"
                                              oncomplete="if (!args.validationFailed) { PF('addBookDialog').hide(); }"/>
                             <p:commandButton value="Hủy" icon="pi pi-times" onclick="PF('addBookDialog').hide()"
@@ -359,7 +360,7 @@
 
                             <p:commandButton value="Cập nhật" icon="pi pi-check"
                                              actionListener="#{booksController.updateBook}"
-                                             update="update-book-content :form:dt-books :form:messages"
+                                             update="update-book-content :form:dt-books :form:growl"
                                              process="update-book-content @this"
                                              oncomplete="if (!args.validationFailed) { PF('updateBookDialog').hide(); }"/>
 
@@ -372,7 +373,7 @@
                                      message="Xoá cuốn sách?" header="Xác nhận" severity="warn">
                         <p:commandButton value="Đồng ý" icon="pi pi-check"
                                          actionListener="#{booksController.delete}"
-                                         process="@this" update=":form:dt-books"
+                                         process="@this" update=":form:dt-books :form:growl"
                                          oncomplete="PF('deletebookDialog').hide()"/>
                         <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                          onclick="PF('deletebookDialog').hide()"/>
@@ -382,7 +383,7 @@
                                      message="Kích hoạt lại cuốn sách?" header="Xác nhận" severity="warn">
                         <p:commandButton value="Đồng ý" icon="pi pi-check"
                                          actionListener="#{booksController.reverseBookStatus}"
-                                         process="@this" update=":form:dt-books"
+                                         process="@this" update=":form:dt-books :form:growl"
                                          oncomplete="PF('reversebookDialog').hide()"/>
                         <p:commandButton value="Hủy" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                          onclick="PF('reversebookDialog').hide()"/>

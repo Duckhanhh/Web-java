@@ -11,7 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RevenueDTO {
-    private Long amount;
+public class NumberOrderDTO {
+    private Long totalQuantity;
+    private Long NumberCompletedOrders;
     private String month;
 }

@@ -10,10 +10,12 @@ import lombok.Data;
 import org.bpm.abcbook.Const;
 import org.bpm.abcbook.dto.OrderDTO;
 import org.bpm.abcbook.dto.response.StaffResponse;
+import org.bpm.abcbook.exception.AppException;
 import org.bpm.abcbook.model.User;
 import org.bpm.abcbook.service.OrderService;
 import org.bpm.abcbook.service.StaffService;
 import org.bpm.abcbook.service.UserService;
+import org.bpm.abcbook.util.DataUtil;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.Visibility;
 import org.slf4j.Logger;
@@ -150,6 +152,9 @@ public class OrderController {
             Long orderId = selectedOrder.getOrderId();
 
             if (Const.OrderState.ORDER_STATE_WAIT_FOR_DELIVERY.equals(state)) {
+                if (DataUtil.isNullOrEmpty(currentStaffCode)) {
+                    throw new AppException("USO0001", "Không có thông tin nhân viên");
+                }
                 orderService.receiveOrder(orderId, currentStaffCode);
             } else if (Const.OrderState.ORDER_STATE_DELIVERING.equals(state)) {
                 orderService.deliveryOrder(orderId);

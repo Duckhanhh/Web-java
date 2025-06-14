@@ -1,5 +1,6 @@
 package org.bpm.abcbook.repository;
 
+import org.bpm.abcbook.dto.NumberOrderDTO;
 import org.bpm.abcbook.dto.OrderDTO;
 import org.bpm.abcbook.dto.RevenueDTO;
 
@@ -12,4 +13,6 @@ public interface OrdersRepoExt {
                              Date fromDate, Date toDate) throws Exception;
 
     List<RevenueDTO> getRevenue() throws Exception;
+
+    List<NumberOrderDTO> getNumberOrder() throws Exception;
 }

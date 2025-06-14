@@ -8,12 +8,16 @@ import jakarta.inject.Named;
 import lombok.Data;
 import org.bpm.abcbook.dto.BookDTO;
 import org.bpm.abcbook.dto.CategoryDTO;
+import org.bpm.abcbook.dto.NumberOrderDTO;
 import org.bpm.abcbook.dto.RevenueDTO;
 import org.bpm.abcbook.exception.AppException;
 import org.bpm.abcbook.service.OrderService;
 
 import org.bpm.abcbook.util.DataUtil;
 import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.line.LineChartDataSet;
 import org.primefaces.model.charts.line.LineChartModel;
 import org.primefaces.model.charts.line.LineChartOptions;
@@ -39,6 +43,8 @@ public class DashBoardController {
     private PieChartModel pieChartModel;
     private List<CategoryDTO> listCategory;
     private List<BookDTO> listBestSelling;
+    private BarChartModel barModel;
+    private List<NumberOrderDTO> numberOrderDTOList;
 
     @Autowired
     private OrderService orderService;
@@ -48,6 +54,7 @@ public class DashBoardController {
         try {
             lineModel = new LineChartModel();
             pieChartModel = new PieChartModel();
+            barModel = new BarChartModel();
 
             listRevenue = orderService.getRevenue();
             if (DataUtil.isNullOrEmpty(listRevenue)) {
@@ -64,10 +71,16 @@ public class DashBoardController {
                 throw new AppException("RCC0002", "Lỗi khi lấy danh sách bán chạy");
             }
 
+            numberOrderDTOList = orderService.getNumberOrder();
+            if (DataUtil.isNullOrEmpty(listBestSelling)) {
+                throw new AppException("RCC0003", "Lỗi khi lấy số lượng đơn");
+            }
+
             createLineChart();
             createPieChart();
+            createBarChart();
         } catch (Exception e) {
-            logger.error("Error initializing OrderController", e);
+            logger.error("Error initializing DashBoardController", e);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Lỗi hệ thống", ""));
         }
     }
@@ -78,13 +91,13 @@ public class DashBoardController {
         LineChartDataSet dataSet = new LineChartDataSet();
         List<Object> values = listRevenue.stream().map(RevenueDTO::getAmount).collect(Collectors.toUnmodifiableList());
         dataSet.setData(values);
-        dataSet.setFill(false);
+        dataSet.setFill(true);
         dataSet.setBorderColor("rgb(75, 192, 192)");
         dataSet.setLabel("Số tiền");
         dataSet.setTension(0.1);
         data.addChartDataSet(dataSet);
 
-        List<String> labels = listRevenue.stream().map(revenue -> DataUtil.formatDateToString(revenue.getMonth())).toList();
+        List<String> labels = listRevenue.stream().map(RevenueDTO::getMonth).toList();
         data.setLabels(labels);
 
         //Options
@@ -118,5 +131,37 @@ public class DashBoardController {
 
         pieChartModel.setOptions(options);
         pieChartModel.setData(data);
+    }
+
+    public void createBarChart() {
+        ChartData data = new ChartData();
+        List<Number> listTotal = numberOrderDTOList.stream().map(NumberOrderDTO::getTotalQuantity).collect(Collectors.toUnmodifiableList());
+
+        List<Number> listCompleted = numberOrderDTOList.stream().map(NumberOrderDTO::getNumberCompletedOrders).collect(Collectors.toUnmodifiableList());
+
+        List<String> labels = numberOrderDTOList.stream()
+                .map(NumberOrderDTO::getMonth)
+                .toList();
+
+        BarChartDataSet totalDataSet = new BarChartDataSet();
+        totalDataSet.setData(listTotal);
+        totalDataSet.setLabel("Tổng số đơn");
+        data.addChartDataSet(totalDataSet);
+
+        BarChartDataSet completeDataSet = new BarChartDataSet();
+        completeDataSet.setData(listCompleted);
+        completeDataSet.setLabel("Số đơn hoàn thành");
+        data.addChartDataSet(completeDataSet);
+
+        data.setLabels(labels);
+
+        BarChartOptions options = new BarChartOptions();
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Số lượng đơn từng tháng");
+        options.setTitle(title);
+
+        barModel.setData(data);
+        barModel.setOptions(options);
     }
 }

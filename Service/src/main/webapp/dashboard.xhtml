@@ -13,22 +13,35 @@
                 </div>
             </p:outputPanel>
 
-            <p:outputPanel styleClass="Container" id="pnChart">
-                <div class="card">
-                    <p:lineChart id="lineChart" widgetVar="lineChartWidget" model="#{dashBoardController.lineModel}" style="width: 100%; height: 500px;"/>
+            <div class="Container100">
+                <p:outputPanel styleClass="Container40" id="pnChart">
+                    <div class="card">
+                        <p:lineChart id="lineChart" widgetVar="lineChartWidget" model="#{dashBoardController.lineModel}"
+                                     style="width: 100%; height: 500px;"/>
 
-                    <p:commandButton type="button" value="Xuất pdf" icon="pi pi-print" onclick="exportChartToPDF()"
-                                     styleClass="mr-2 mb-2" style="width: 130px; margin-top: 2%; margin-left: 2%"/>
-                </div>
-            </p:outputPanel>
+                        <p:commandButton type="button" value="Xuất pdf" icon="pi pi-print" onclick="exportChartToPDF()"
+                                         styleClass="mr-2 mb-2" style="width: 130px; margin-top: 2%; margin-left: 2%"/>
+                    </div>
+                </p:outputPanel>
+
+                <p:outputPanel styleClass="Container40" id="pnChart2" style="margin-left: 10%;">
+                    <div class="card">
+                        <p:barChart id="barChart" widgetVar="barChartWidget" model="#{dashBoardController.barModel}"
+                                    style="width: 100%; height: 500px;"/>
+
+                        <p:commandButton type="button" value="Xuất pdf" icon="pi pi-print" onclick="exportBarChart()"
+                                         styleClass="mr-2 mb-2" style="width: 130px; margin-top: 2%; margin-left: 2%"/>
+                    </div>
+                </p:outputPanel>
+            </div>
 
             <p:outputPanel styleClass="Container30" id="pnPieChart">
-                <div class="card">
+                <div class="card" style="width: 100%; height: 550px;">
                     <p:pieChart model="#{dashBoardController.pieChartModel}" style="width: 100%; height: 500px;"/>
                 </div>
             </p:outputPanel>
 
-            <p:outputPanel styleClass="Container66" id="tblBestSelling" style="margin-left: 1%">
+            <p:outputPanel styleClass="Container60" id="tblBestSelling" style="margin-left: 3%; height: 500px;">
                 <div class="card">
                     <p:outputLabel for="tbvl" value="Top các cuốn sách bán chạy"
                                    style="font-weight: bold; font-size: 16px; display: block; text-align: center; margin-bottom: 20px; margin-top: 20px"/>

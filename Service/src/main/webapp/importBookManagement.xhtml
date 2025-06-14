@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="template.xhtml">
+    <ui:define name="content">
+        <p:growl id="growl" showDetail="true" sticky="true"/>
+        <h:form id="importForm" enctype="multipart/form-data">
+            <div class="card">
+                <h5 style="font-weight: bold; margin-left: 2%">Nhập sách bằng file excel</h5>
+                <div class="p-fluid">
+                    <div class="p-field" style="margin-left: 2%">
+                        <p:fileUpload value="#{importBookController.uploadedFile}"
+                                      mode="simple" skinSimple="true"
+                                      accept=".xlsx,.xls"
+                                      label="Tải file"
+                                      allowTypes="/(\.|\/)(xlsx|xls)$/"
+                                      sizeLimit="10485760"
+                                      showMessages="false"
+                                      update=":growl :importForm:importButton :importForm:fileUpload"
+                                      styleClass="upload-area"
+                                      id="fileUpload">
+                        </p:fileUpload>
+                    </div>
+                    <p:commandButton value="Xóa file"
+                                     action="#{importBookController.clearFile}"
+                                     update=":growl :importForm:importButton :importForm:fileUpload"
+                                     styleClass="p-button-danger p-button-sm"
+                                     icon="pi pi-times"
+                                     style="margin-left: 2%; margin-top: 1%"/>
+
+                    <div class="Container100"
+                         style="justify-content: center; align-items: center; text-align: center; margin-top: 1%; display: flex;">
+                        <p:commandButton id="importButton"
+                                         value="Thêm mới"
+                                         action="#{importBookController.readExcelFile}"
+                                         update=":growl"
+                                         styleClass="p-button-success"
+                                         icon="pi pi-upload"/>
+                        <p:commandButton value="Tải template" styleClass="p-button-info" icon="pi pi-download"
+                                         update=":growl" style="margin-left: 10px;">
+                            <p:fileDownload value="#{templateDownloadBean.templateFile}"/>
+                        </p:commandButton>
+                    </div>
+
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

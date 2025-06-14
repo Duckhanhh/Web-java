@@ -217,7 +217,7 @@
                             <p:column headerText="STT" style="width: 20px; text-align: center;">
                                 <p:outputLabel styleClass="blackColor text-ellipsis" value="#{index + 1}"/>
                             </p:column>
-                            <p:column headerText="Mã đơn hàng" style="width: 100px; text-align: center;">
+                            <p:column headerText="Mã đơn hàng" style="width: 90px; text-align: center;">
                                 <p:outputLabel styleClass="blackColor text-ellipsis"
                                                value="#{order.orderId}"/>
                             </p:column>
@@ -241,13 +241,13 @@
                                 <p:outputLabel styleClass="blackColor text-ellipsis"
                                                value="#{orderController.getPayStatusName(order.payStatus)}"/>
                             </p:column>
-                            <p:column headerText="Ngày tạo" style="width: 100px; text-align: center;">
+                            <p:column headerText="Ngày tạo" style="width: 80px; text-align: center;">
                                 <p:outputLabel styleClass="blackColor text-ellipsis"
                                                value="#{order.orderDate}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
                                 </p:outputLabel>
                             </p:column>
-                            <p:column exportable="false" ariaHeaderText="Actions" style="width: 100px;">
+                            <p:column exportable="false" ariaHeaderText="Actions" style="width: 120px;">
                                 <p:commandButton icon="pi pi-cart-arrow-down"
                                                  styleClass="rounded-button ui-button-success"
                                                  oncomplete="PF('receiveDialog').show()"

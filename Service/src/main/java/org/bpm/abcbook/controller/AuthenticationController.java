@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Named
 @Data
 public class AuthenticationController {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+    public static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     private String email;
     private String password;
     private String errorMessage;
@@ -39,17 +39,22 @@ public class AuthenticationController {
 
     public String login() throws Exception {
         try {
+            logger.info("Starting login process for email: {}", email);
+            
             AuthenticationResponse authResponse = authenticationService.login(new AuthenticationRequest(email, password));
+            logger.info("Login successful, received token: {}", authResponse.getToken());
 
             userSessionBean.setUserSession(
                     authResponse.getStaffResponse(),
                     authResponse.getToken(),
                     authResponse
             );
-
-            return "dashboard?faces-redirect=true";
+            logger.info("User session has been set successfully");
+            
+            return "/dashboard.jsf?faces-redirect=true";
+            
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Login failed with error: {}", e.getMessage(), e);
             errorMessage = e.getMessage();
             FacesContext.getCurrentInstance()
                     .addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage()));
@@ -63,20 +68,4 @@ public class AuthenticationController {
         return "login?faces-redirect=true";
     }
 
-    public ApiResponse introspect(@RequestBody
-                                  @Valid IntrospectRequest introspectRequest, HttpServletRequest request) {
-        try {
-            return ApiResponse.builder()
-                    .code(null)
-                    .success(true)
-                    .data(authenticationService.introspect(introspectRequest))
-                    .path(request.getRequestURI()).build();
-        } catch (AppException e) {
-            logger.error(e.getMessage());
-            throw new AppException(e.getCode(), e.getMessage());
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            throw new AppException("CU00000", "common.system.error");
-        }
-    }
 }

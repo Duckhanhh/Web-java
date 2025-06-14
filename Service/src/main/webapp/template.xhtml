@@ -6,9 +6,10 @@
 <h:head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Bookstore Dashboard</title>
+    <title>Bookstore Management</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
           rel="stylesheet"/>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png"/>
     <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet"/>
     <link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet"/>
@@ -85,7 +86,7 @@
 <body>
 <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-        <a href="/dashboard.jsf" class="logo d-flex align-items-center">
+        <a href="/dashboard.jsf" class="logo d-flex align-items-center" style="margin-left: 5%">
             <img class="logo d-flex align-items-center w-auto" src="assets/img/main_logo.png" alt=""/>
         </a>
     </div>
@@ -175,7 +176,7 @@
             </a>
         </li>
         <li class="nav-item" data-role="admin,staff">
-            <a class="nav-link collapsed" href="#purchase-orders" data-section="purchase-orders">
+            <a class="nav-link collapsed" href="${pageContext.request.contextPath}/importBookManagement.jsf" data-section="purchase-orders">
                 <i class="bi bi-truck"></i>
                 <span>Quản lý nhập hàng</span>
             </a>
@@ -331,7 +332,6 @@
 <script src="assets/js/html2canvas.min.js"></script>
 <script src="assets/js/jspdf.umd.min.js"></script>
 <script>
-    // Define exportChartToPDF function globally
     window.exportChartToPDF = async function () {
         const {jsPDF} = window.jspdf;
         // Update selector to find PrimeFaces chart canvas
@@ -347,6 +347,22 @@
         pdf.addImage(imgData, 'PNG', 10, 10, 180, 100);
         pdf.save("linechart.pdf");
     };
+
+    window.exportBarChart = async function () {
+        const {jsPDF} = window.jspdf;
+        // Update selector to find PrimeFaces chart canvas
+        const chartElement = document.querySelector('#chart\\:barChart canvas');
+
+        if (!chartElement) {
+            alert("Không tìm thấy biểu đồ.");
+            return;
+        }
+        const imgData = chartElement.toDataURL("image/png");
+
+        const pdf = new jsPDF();
+        pdf.addImage(imgData, 'PNG', 10, 10, 180, 100);
+        pdf.save("barchart.pdf");
+    }
 </script>
 </body>
 </html>

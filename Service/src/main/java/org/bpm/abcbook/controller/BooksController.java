@@ -118,9 +118,14 @@ public class BooksController implements Serializable {
         try {
             booksService.deleteBook(selectedBook.getId());
             getAllBooks();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Xóa thành công"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Thành công",
+                            "Xóa thành công"));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Lỗi",
+                            "Xóa thất bại"));
             throw new AppException("FA00000", e.getMessage());
         }
     }
@@ -154,10 +159,15 @@ public class BooksController implements Serializable {
                 }
             }
             booksService.updateBook(selectedBook, currentStaff);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cập nhật thành công"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Thành công",
+                            "Cập nhật thành công"));
             getAllBooks();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Lỗi",
+                            "Cập nhật thất bại"));
             throw new AppException("UB00000", e.getMessage());
         }
     }
@@ -172,10 +182,15 @@ public class BooksController implements Serializable {
             }
 
             booksService.updateBook(selectedBook, currentStaff);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Kích hoạt thành công"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Thành công",
+                            "Cập nhật thành công"));
             getAllBooks();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Lỗi",
+                            "Cập nhật thất bại"));
             throw new AppException("UB00000", e.getMessage());
         }
     }
@@ -184,9 +199,13 @@ public class BooksController implements Serializable {
         try {
             booksService.insertBook(book);
             getAllBooks();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Đã thêm thành công"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Thành công","Đã thêm thành công"));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Lỗi",
+                            "Thêm mới thất bại"));
             throw new AppException("IB00000", e.getMessage());
         }
     }
@@ -224,7 +243,6 @@ public class BooksController implements Serializable {
         booksService.deleteListBook(this.selectedBooks.stream().map(Books::getId).toList());
         getAllBooks();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Đã xóa"));
-        PrimeFaces.current().ajax().update("form:messages", "form:dt-books");
         PrimeFaces.current().executeScript("PF('dtBooks').clearFilters()");
     }
 }

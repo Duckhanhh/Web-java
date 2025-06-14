@@ -468,7 +468,7 @@ img{ border:none; border:0px;}
 
 .main-content, .content {
     margin-top: 60px;         /* Chiều cao header */
-    margin-left: 300px;       /* Chiều rộng sidebar */
+    margin-left: 280px;       /* Chiều rộng sidebar */
     width: calc(100% - 300px);
     min-height: calc(100vh - 60px);
     box-sizing: border-box;

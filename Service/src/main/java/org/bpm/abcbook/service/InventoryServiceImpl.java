@@ -3,16 +3,21 @@ package org.bpm.abcbook.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bpm.abcbook.dto.BookDTO;
+import org.bpm.abcbook.dto.BookImportDTO;
 import org.bpm.abcbook.exception.AppException;
 import org.bpm.abcbook.mapper.BooksMapper;
+import org.bpm.abcbook.model.Books;
 import org.bpm.abcbook.model.Inventory;
+import org.bpm.abcbook.repository.BooksRepo;
 import org.bpm.abcbook.repository.InventoryRepo;
+import org.bpm.abcbook.util.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InventoryServiceImpl implements InventoryService {
@@ -23,6 +28,8 @@ public class InventoryServiceImpl implements InventoryService {
     private BooksService booksService;
     @Autowired
     private BooksMapper booksMapper;
+    @Autowired
+    private BooksRepo booksRepo;
 
     @Override
     public List<Inventory> getAllBookInStock() throws Exception {
@@ -51,5 +58,31 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setUpdateDate(new Date());
 
         inventoryRepo.save(inventory);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void importBook(List<BookImportDTO> importDTOList, String staffCode) throws Exception {
+        if (DataUtil.isNullOrEmpty(importDTOList)) {
+            throw new AppException("IB00001", "Phải có dữ liệu sách");
+        }
+
+        List<Long> listBookId = importDTOList.stream().map(BookImportDTO::getBookId).toList();
+        List<Long> foundIds = booksRepo.findAllById(listBookId)
+                .stream()
+                .map(Books::getId)
+                .toList();
+
+        if (foundIds.size() != listBookId.size()) {
+            throw new AppException("IB00002", "Thông tin id sách bị sai");
+        }
+
+        for (BookImportDTO item : importDTOList) {
+            if (item == null) {
+                continue;
+            }
+
+            inventoryRepo.increaseQuantity(item.getBookId(), item.getQuantity(), staffCode);
+        }
     }
 }

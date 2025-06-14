@@ -3,8 +3,10 @@ package org.bpm.abcbook.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import org.bpm.abcbook.dto.NumberOrderDTO;
 import org.bpm.abcbook.dto.OrderDTO;
 import org.bpm.abcbook.dto.RevenueDTO;
+import org.bpm.abcbook.util.DataUtil;
 import org.bpm.abcbook.util.DbUtil;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,6 @@ public class OrdersRepoExtImpl implements OrdersRepoExt {
     private EntityManager em;
 
     @Override
-    @Transactional(readOnly = true)
     public List<OrderDTO> findOrder(Long orderId, Long payMethod, Long payStatus, List<Long> listUserId, List<Long> listStatus,
                                     List<String> listShippingCarrier, List<String> listStaff, List<Long> listState, Date fromDate, Date toDate) throws Exception {
         StringBuilder sql = new StringBuilder("SELECT o.order_id, o.status, o.state, o.total_amount, o.payment_method, o.pay_status," +
@@ -147,9 +148,9 @@ public class OrdersRepoExtImpl implements OrdersRepoExt {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<RevenueDTO> getRevenue() throws Exception {
-        Query query = em.createNativeQuery("SELECT total_amount, order_date FROM Orders WHERE status = 3 ORDER BY order_date asc LIMIT 1000 ");
+        Query query = em.createNativeQuery("SELECT SUM(total_amount), DATE_FORMAT(order_date, '%m/%Y') FROM Orders WHERE status = 3 " +
+                "GROUP BY DATE_FORMAT(order_date, '%m/%Y') ORDER BY DATE_FORMAT(order_date, '%m/%Y') asc LIMIT 1000 ");
         List<Object[]> result = query.getResultList();
         if (result == null || result.isEmpty()) {
             return new ArrayList<>();
@@ -162,10 +163,32 @@ public class OrdersRepoExtImpl implements OrdersRepoExt {
 
             revenueDTO.setAmount(row[i] != null ? ((Number) row[i]).longValue() : null);
             i++;
-            revenueDTO.setMonth(row[i] != null ? (Date) row[i] : null);
+            revenueDTO.setMonth(row[i] != null ? row[i].toString() : null);
 
             listRevenue.add(revenueDTO);
         }
         return listRevenue;
+    }
+
+    @Override
+    public List<NumberOrderDTO> getNumberOrder() throws Exception {
+        Query query = em.createNativeQuery("SELECT DATE_FORMAT(order_date, '%m/%Y') month, COUNT(*), SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END)" +
+                "FROM Orders WHERE YEAR(order_date) = YEAR(CURDATE()) GROUP BY DATE_FORMAT(order_date, '%m/%Y') ORDER BY month");
+        List<Object[]> resultList = query.getResultList();
+        if (DataUtil.isNullOrEmpty(resultList)) {
+            return new ArrayList<>();
+        }
+
+        List<NumberOrderDTO> numberOrderDTOList = new LinkedList<>();
+        for (Object[] row : resultList) {
+            int i = 0;
+            NumberOrderDTO dto = new NumberOrderDTO();
+            dto.setMonth(row[i] != null ? row[i].toString() : null); i++;
+            dto.setTotalQuantity(row[i] != null ? ((Number) row[i]).longValue() : null); i++;
+            dto.setNumberCompletedOrders(row[i] != null ? ((Number) row[i]).longValue() : null);
+            numberOrderDTOList.add(dto);
+        }
+
+        return numberOrderDTOList;
     }
 }
